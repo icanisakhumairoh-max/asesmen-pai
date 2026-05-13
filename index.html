@@ -1,0 +1,1818 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asesmen Digital PAI</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --color-primary: #047857;
+            --color-secondary: #059669;
+            --color-bg: #f0fdf4;
+        }
+
+        body { font-family: 'Poppins', sans-serif; background-color: var(--color-bg); color: #1e293b; overflow-x: hidden; }
+        .font-arabic { font-family: 'Amiri', serif; }
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .spin-slow { animation: spin 12s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .landing-card-custom {
+            background: linear-gradient(135deg, #065f46 0%, #047857 100%);
+            backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); color: white; position: relative; overflow: hidden;
+        }
+
+        .islamic-bg {
+            background-color: #064e3b;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M54.627 0l.83.828-1.415 1.415-.828-.828-.828.828-1.415-1.415.828-.828-.828-.828 1.415-1.415.828.828.828-.828 1.415 1.415-.828.828zM22.485 0l.83.828-1.415 1.415-.828-.828-.828.828-1.415-1.415.828-.828-.828-.828 1.415-1.415.828.828.828-.828 1.415 1.415-.828.828zM0 22.485l.828.83-1.415 1.415-.828-.828-.828.828L-2.83 22.485l.828-.828-.828-.828 1.415-1.415.828.828.828-.828 1.415 1.415-.828.828zM0 54.627l.828.83-1.415 1.415-.828-.828-.828.828L-2.83 54.627l.828-.828-.828-.828 1.415-1.415.828.828.828-.828 1.415 1.415-.828.828zM56.657 3.456a28.23 28.23 0 0 1-5.029 4.376c-2.072 1.393-4.42 2.37-6.88 2.87-2.46.5-4.992.404-7.426-.282-2.434-.686-4.71-1.92-6.696-3.628L30 6.226l-.626.566c-1.986 1.708-4.262 2.942-6.696 3.628-2.434.686-4.966.782-7.426.282-2.46-.5-4.808-1.477-6.88-2.87a28.23 28.23 0 0 1-5.029-4.376l2.122-2.121c1.39 1.488 2.972 2.805 4.71 3.923 1.737 1.118 3.624 1.935 5.612 2.432 1.988.497 4.053.608 6.07.332 2.017-.276 3.967-1.026 5.76-2.215L30 3.515l2.383 2.298c1.793 1.19 3.743 1.94 5.76 2.216 2.017.276 4.082.165 6.07-.332 1.988-.497 3.875-1.314 5.612-2.432 1.738-1.118 3.32-2.435 4.71-3.923l2.122 2.121z' fill='%23fbbf24' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+        }
+
+        .watermark-fixed {
+            position: fixed; bottom: 20px; right: 20px; font-size: 0.75rem; font-weight: 600; font-style: italic;
+            z-index: 9999; pointer-events: none; transition: color 0.5s ease;
+        }
+        
+        .custom-select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23059669' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center; background-repeat: no-repeat; background-size: 1.5em 1.5em; padding-right: 2.5rem;
+            appearance: none; -webkit-appearance: none;
+        }
+
+        #toast {
+            visibility: hidden; min-width: 250px; background-color: #333; color: #fff; text-align: center;
+            border-radius: 8px; padding: 16px; position: fixed; z-index: 1000; left: 50%; bottom: 30px;
+            transform: translateX(-50%); font-size: 14px; opacity: 0; transition: opacity 0.5s, bottom 0.5s;
+        }
+        #toast.show { visibility: visible; opacity: 1; bottom: 50px; }
+
+        @media print {
+            body * { visibility: hidden; }
+            .print-area, .print-area * { visibility: visible; }
+            .print-area { position: absolute; left: 0; top: 0; width: 100%; padding: 20px; background: white; }
+            .no-print { display: none !important; }
+            aside { display: none; }
+            main { margin: 0; padding: 0; width: 100%; }
+            .glass-card, .bg-white { box-shadow: none; border: 1px solid #ccc; }
+            * { -webkit-print-color-adjust: exact !important;   print-color-adjust: exact !important; }
+        }
+
+        #mobile-menu-btn { display: none; }
+        @media (max-width: 768px) {
+            #mobile-menu-btn { display: block; }
+            .sidebar { transform: translateX(-100%); transition: transform 0.3s ease-in-out; }
+            .sidebar.open { transform: translateX(0); }
+        }
+    </style>
+</head>
+<body class="islamic-bg min-h-screen transition-colors duration-500">
+
+    <div id="global-watermark" class="watermark-fixed text-white/30">
+        Created by Nur Faidatul Hasanah (Universitas Islam Syarifuddin)
+    </div>
+
+    <div id="toast">Notifikasi</div>
+
+    <div id="view-landing" class="min-h-screen flex flex-col items-center justify-center relative px-4 fade-in overflow-hidden">
+        
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent via-emerald-900/50 to-emerald-950 pointer-events-none"></div>
+        <div class="absolute -top-40 -left-40 w-96 h-96 bg-emerald-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
+        <div class="absolute -bottom-40 -right-40 w-96 h-96 bg-yellow-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
+
+        <div class="landing-card-custom p-8 md:p-12 rounded-3xl max-w-4xl w-full text-center relative z-20 border-t-4 border-yellow-400">
+            <div class="relative z-10">
+                <div class="flex justify-center mb-8">
+                    <div class="w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-xl border-4 border-emerald-500 z-10">
+                        <i class="fas fa-mosque text-emerald-600 text-5xl"></i>
+                    </div>
+                </div>
+                <h1 class="text-4xl md:text-6xl font-bold text-white mb-6 font-arabic tracking-wide leading-tight drop-shadow-md">
+                    Asesmen Digital PAI
+                </h1>
+                
+                <div class="mb-10 px-6 py-4 bg-white/10 rounded-2xl border border-white/20 max-w-lg mx-auto backdrop-blur-sm shadow-sm transform hover:scale-105 transition-transform duration-300">
+                    <p class="text-yellow-200 text-xs md:text-sm font-medium italic leading-relaxed tracking-wide">
+                        "Aplikasi ini dirancang untuk membantu guru PAI dalam melakukan penilaian digital dan memberi ruang bagi siswa untuk melihat progress tugas dan hasil belajar secara berkelanjutan."
+                    </p>
+                </div>
+                
+                <div class="max-w-md mx-auto">
+                    <button onclick="switchView('view-info')" class="w-full bg-white text-emerald-800 font-bold text-lg py-4 rounded-xl shadow-xl hover:bg-emerald-50 transition-all transform hover:-translate-y-1 flex items-center justify-center gap-3">
+                        <span>Mulai Aplikasi</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-info" class="hidden min-h-screen flex flex-col items-center justify-center p-4 relative fade-in islamic-bg">
+        <button onclick="switchView('view-landing')" class="absolute top-6 left-6 text-white/80 hover:text-white hover:bg-white/10 p-2 rounded-full transition-all z-20"><i class="fas fa-arrow-left text-xl"></i></button>
+        
+        <div class="glass-card p-8 rounded-3xl w-full max-w-4xl bg-white/95 h-[85vh] overflow-y-auto relative z-10 flex flex-col">
+            <h2 class="text-3xl font-bold text-emerald-800 font-arabic mb-6 text-center border-b pb-4 border-emerald-100">Informasi & Petunjuk Penggunaan</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 flex-1">
+                <div>
+                    <div class="bg-emerald-50 p-6 rounded-2xl border border-emerald-100 mb-6">
+                        <h3 class="font-bold text-emerald-900 flex items-center gap-2 mb-4"><i class="fas fa-school"></i> Identitas Sekolah</h3>
+                        <table class="text-sm text-gray-700 w-full">
+                            <tr class="border-b border-emerald-100"><td class="py-2 font-medium w-1/3">Nama Sekolah</td><td class="py-2">SMAN 1 Yosowilangun</td></tr>
+                            <tr class="border-b border-emerald-100"><td class="py-2 font-medium">Alamat</td><td class="py-2">Jl. Raya Kebonsari Yosowilangun</td></tr>
+                            <tr class="border-b border-emerald-100"><td class="py-2 font-medium align-top">Guru PAI</td><td class="py-2">1. Dr. Abdul Mu'is Joenaidi, M.Pd.I.<br>2. Sri Lestari, S.Ag.<br>3. Koyum, S.Pd.I.</td></tr>
+                            <tr><td class="py-2 font-medium">Mata Pelajaran</td><td class="py-2">Pendidikan Agama Islam (PAI)</td></tr>
+                        </table>
+                    </div>
+
+                    <div class="bg-yellow-50 p-6 rounded-2xl border border-yellow-100">
+                        <h3 class="font-bold text-yellow-900 flex items-center gap-2 mb-4"><i class="fas fa-info-circle"></i> Hal Penting</h3>
+                        <ul class="list-disc pl-5 text-sm text-gray-700 space-y-2">
+                            <li><strong>Penilaian:</strong> Meliputi Aspek Pengetahuan (P), Keterampilan (K), dan Sikap.</li>
+                            <li><strong>Sikap:</strong> Dinilai dengan predikat Sangat Baik, Baik, atau Cukup.</li>
+                            <li><strong>Kehadiran Data:</strong> Data tersimpan di browser perangkat ini. Jangan menghapus cache browser jika data belum di-backup/export.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2"><i class="fas fa-book-reader text-emerald-600"></i> Petunjuk Penggunaan</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="p-4 border rounded-xl hover:bg-gray-50 transition">
+                            <h4 class="font-bold text-emerald-700 text-sm mb-1">1. Untuk Guru</h4>
+                            <p class="text-xs text-gray-600 leading-relaxed">
+                                - Login menggunakan Pilihan Nama dan Password (12345).<br>
+                                - Masuk menu <strong>Data Siswa</strong> untuk mengunggah daftar siswa per kelas via Excel.<br>
+                                - Gunakan menu <strong>Input Nilai Kelas</strong> untuk menilai satu kelas sekaligus.<br>
+                                - Gunakan menu <strong>Kelola Tugas</strong> untuk membagikan link Google Form/materi. Guru bisa me-export hasil pengumpulan ke Excel.<br>
+                                - Jangan lupa <strong>Backup Data</strong> secara berkala.
+                            </p>
+                        </div>
+                        <div class="p-4 border rounded-xl hover:bg-gray-50 transition">
+                            <h4 class="font-bold text-yellow-700 text-sm mb-1">2. Untuk Siswa</h4>
+                            <p class="text-xs text-gray-600 leading-relaxed">
+                                - Pilih Kelas dan Nama Anda di halaman Login.<br>
+                                - Cek tugas di tab "Tugas Kelas". Klik tombol untuk membuka Google Form.<br>
+                                - Jika sudah selesai mengisi Form, ketik "Selesai" lalu klik Kirim Tugas.<br>
+                                - Lihat grafik capaian kompetensi dan unduh rapor jika sudah lengkap.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 text-center pt-6 border-t border-gray-100">
+                <p class="text-xs text-gray-400 mb-4">Versi Aplikasi 2.4 &bull; Dibuat untuk Efisiensi Pembelajaran PAI</p>
+                <button onclick="switchView('view-login-options')" class="w-full md:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-all flex items-center justify-center gap-3 mx-auto transform hover:-translate-y-1">
+                    <span>Lanjut ke Halaman Login</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-login-options" class="hidden min-h-screen flex flex-col items-center justify-center relative px-4 fade-in islamic-bg">
+        <button onclick="switchView('view-info')" class="absolute top-6 left-6 text-white/80 hover:text-white hover:bg-white/10 p-2 rounded-full transition-all z-20"><i class="fas fa-arrow-left text-xl"></i></button>
+        
+        <div class="glass-card p-8 rounded-3xl max-w-2xl w-full text-center relative z-10">
+            <h2 class="text-3xl font-bold text-emerald-800 font-arabic mb-2">Pilih Akses Masuk</h2>
+            <p class="text-gray-500 mb-8">Silakan pilih peran Anda untuk melanjutkan.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <button onclick="switchView('view-guru-login')" class="group relative overflow-hidden bg-emerald-800 rounded-2xl p-1 transition-all hover:shadow-2xl hover:-translate-y-1">
+                    <div class="bg-emerald-50 rounded-xl p-6 h-full flex flex-col items-center justify-center relative z-10 group-hover:bg-emerald-100 transition-colors border border-emerald-200">
+                        <div class="w-16 h-16 bg-emerald-200 rounded-full flex items-center justify-center mb-4 text-emerald-800 group-hover:scale-110 transition-transform shadow-sm">
+                            <i class="fas fa-chalkboard-teacher text-3xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-emerald-900">Guru PAI</h3>
+                        <span class="text-xs text-emerald-600 mt-1 font-medium px-3 py-1 rounded-full border border-emerald-200 bg-white/50">Masuk sebagai Pengajar</span>
+                    </div>
+                </button>
+                <button onclick="switchView('view-siswa-login')" class="group relative overflow-hidden bg-yellow-500 rounded-2xl p-1 transition-all hover:shadow-2xl hover:-translate-y-1">
+                    <div class="bg-yellow-50 rounded-xl p-6 h-full flex flex-col items-center justify-center relative z-10 group-hover:bg-yellow-100 transition-colors border border-yellow-200">
+                        <div class="w-16 h-16 bg-yellow-200 rounded-full flex items-center justify-center mb-4 text-yellow-800 group-hover:scale-110 transition-transform shadow-sm">
+                            <i class="fas fa-user-graduate text-3xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-yellow-900">Siswa</h3>
+                        <span class="text-xs text-yellow-700 mt-1 font-medium px-3 py-1 rounded-full border border-yellow-200 bg-white/50">Masuk sebagai Peserta</span>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-guru-login" class="hidden min-h-screen flex items-center justify-center px-4 relative fade-in islamic-bg">
+        <button onclick="switchView('view-login-options')" class="absolute top-6 left-6 text-white/80 hover:text-white hover:bg-white/10 p-2 rounded-full transition-all"><i class="fas fa-arrow-left text-xl"></i></button>
+        <div class="glass-card p-8 rounded-3xl w-full max-w-md text-center border-t-4 border-emerald-400 bg-white/95">
+            <div class="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-4 text-emerald-600 shadow-inner"><i class="fas fa-chalkboard-teacher text-3xl"></i></div>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2 font-arabic">Login Guru PAI</h2>
+            <p class="text-gray-500 text-sm mb-8">Silakan pilih nama Anda untuk masuk.</p>
+            <form onsubmit="handleGuruLogin(event)">
+                <div class="space-y-4 mb-6">
+                    <div class="relative">
+                        <i class="fas fa-user absolute left-4 top-4 text-emerald-600 z-10"></i>
+                        <select id="guru-username" class="w-full p-4 pl-12 rounded-xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-gray-800 custom-select cursor-pointer font-medium" required>
+                            <option value="">-- Pilih Nama Guru --</option>
+                            <option value="Abdul Mu'is">Abdul Mu'is</option>
+                            <option value="Sri Lestari">Sri Lestari</option>
+                            <option value="Koyum">Koyum</option>
+                        </select>
+                    </div>
+                    <div class="relative">
+                        <i class="fas fa-lock absolute left-4 top-4 text-emerald-600 z-10"></i>
+                        <input type="password" id="guru-password" placeholder="Password" class="w-full p-4 pl-12 rounded-xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-gray-800" required>
+                    </div>
+                </div>
+                <button type="submit" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg shadow-emerald-200 transition-all transform hover:-translate-y-1 cursor-pointer">Masuk Dashboard</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="view-guru" class="hidden min-h-screen flex flex-col md:flex-row bg-gray-50">
+        <button id="mobile-menu-btn" onclick="toggleSidebar()" class="fixed top-4 left-4 z-50 bg-emerald-800 text-white p-3 rounded-full shadow-lg md:hidden">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <aside id="sidebar" class="sidebar w-full md:w-64 bg-emerald-900 text-white flex-shrink-0 md:h-screen fixed md:sticky top-0 z-40 h-full overflow-y-auto no-print">
+            <div class="p-6 flex items-center gap-3 border-b border-emerald-800 mt-10 md:mt-0">
+                <div class="w-8 h-8 bg-yellow-400 rounded-lg flex items-center justify-center text-emerald-900 font-bold shadow-lg">NI</div>
+                <div class="flex flex-col">
+                    <span class="font-bold text-lg font-arabic">Dashboard</span>
+                    <span class="text-xs text-emerald-300" id="guru-name-display">Guru PAI</span>
+                </div>
+            </div>
+            <nav class="p-4 space-y-2">
+                <a href="#" onclick="switchView('view-info')" class="flex items-center gap-3 p-3 rounded-xl hover:bg-emerald-800 text-emerald-100 transition-all">
+                    <i class="fas fa-info-circle w-5 text-center"></i> Info Aplikasi
+                </a>
+                <a href="#" onclick="switchView('view-guru')" class="nav-item active flex items-center gap-3 p-3 rounded-xl transition-all bg-emerald-800 text-white shadow-md">
+                    <i class="fas fa-edit w-5 text-center"></i> Input Nilai Kelas
+                </a>
+                <a href="#" onclick="switchView('view-kelola-tugas')" class="flex items-center gap-3 p-3 rounded-xl hover:bg-emerald-800 text-emerald-100 transition-all">
+                    <i class="fas fa-link w-5 text-center"></i> Kelola Tugas
+                </a>
+                <a href="#" onclick="switchView('view-data-siswa')" class="flex items-center gap-3 p-3 rounded-xl hover:bg-emerald-800 text-emerald-100 transition-all">
+                    <i class="fas fa-users w-5 text-center"></i> Data Siswa
+                </a>
+                <a href="#" onclick="printPage()" class="flex items-center gap-3 p-3 rounded-xl hover:bg-emerald-800 text-emerald-100 transition-all">
+                    <i class="fas fa-file-export w-5 text-center"></i> Export PDF (Cetak)
+                </a>
+                <a href="#" onclick="switchView('view-manajemen-data')" class="flex items-center gap-3 p-3 rounded-xl hover:bg-emerald-800 text-emerald-100 transition-all">
+                    <i class="fas fa-database w-5 text-center"></i> Backup & Data
+                </a>
+                <div class="pt-8 mt-4 border-t border-emerald-800">
+                    <button onclick="logout()" class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-red-500/20 text-red-300 hover:text-red-200 transition-all">
+                        <i class="fas fa-sign-out-alt w-5 text-center"></i> Keluar
+                    </button>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="flex-1 p-4 md:p-8 overflow-y-auto w-full">
+            <header class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 no-print">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-800 font-arabic">Input Penilaian Kelas</h2>
+                    <p class="text-gray-500 text-sm">Semester Genap 2024/2025</p>
+                </div>
+                
+                <div class="flex items-center gap-2 bg-white p-1 rounded-xl shadow-sm border border-emerald-100">
+                    <button onclick="switchGradingMode('bulk')" id="btn-mode-bulk" class="px-4 py-2 rounded-lg text-sm font-medium transition-all bg-emerald-100 text-emerald-800">
+                        <i class="fas fa-users mr-1"></i> Satu Kelas
+                    </button>
+                </div>
+            </header>
+
+            <div class="space-y-6 print-area">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-emerald-100 no-print">
+                    <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                        <div class="w-full md:w-auto">
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">1. Pilih Kelas</label>
+                            <select id="global-kelas" onchange="handleClassChange()" class="w-full p-3 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-900 font-bold focus:ring-2 focus:ring-emerald-500 cursor-pointer custom-select shadow-sm"></select>
+                        </div>
+                        <div class="w-full md:flex-1">
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">2. Pilih Elemen Pembelajaran</label>
+                            <div class="grid grid-cols-2 md:grid-cols-6 gap-2" id="element-selector"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="assessment-header" class="p-4 bg-blue-50 rounded-xl border border-blue-100 no-print">
+                    <div class="flex items-start gap-3">
+                        <div class="bg-blue-100 p-2 rounded-lg text-blue-600"><i class="fas fa-book-open"></i></div>
+                        <div>
+                            <h4 class="font-bold text-blue-900 text-sm">Materi Pembelajaran</h4>
+                            <div id="topic-title" class="font-medium text-blue-800 mt-1"></div>
+                            <div id="material-list-container" class="mt-2 pl-4 text-xs text-blue-700/80 border-l-2 border-blue-200"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="mode-bulk" class="bg-white p-6 rounded-2xl shadow-sm border border-emerald-100 fade-in print-area no-print">
+                    <div class="flex justify-between items-center mb-4 border-b border-emerald-100 pb-2">
+                        <div>
+                            <h4 class="text-emerald-800 font-bold">Input Nilai Kelas <span id="bulk-class-label">X-1</span></h4>
+                            <span class="text-xs text-gray-500">Elemen: <span id="bulk-element-label" class="font-bold text-emerald-600">Al-Qur'an</span></span>
+                        </div>
+                        <button onclick="autoFillAttitude()" class="text-xs bg-amber-100 text-amber-800 px-3 py-1.5 rounded-lg hover:bg-amber-200 transition-colors font-medium border border-amber-200">
+                            <i class="fas fa-magic mr-1"></i> Isi Predikat 'Baik'
+                        </button>
+                    </div>
+                    
+                    <form id="bulk-form" onsubmit="saveBulkData(event)">
+                        <div class="overflow-x-auto max-h-[600px] border border-gray-200 rounded-lg">
+                            <table class="w-full text-sm text-left border-collapse border-spacing-0">
+                                <thead class="text-xs text-gray-700 uppercase bg-gray-50 sticky top-0 z-10 shadow-sm">
+                                    <tr>
+                                        <th class="px-4 py-3 border-b bg-gray-100 w-1/3 min-w-[200px]">Nama Siswa</th>
+                                        <th class="px-1 py-3 w-28 text-center border-b bg-gray-100">
+                                            Pengetahuan <button type="button" onclick="copyDown('b_p')" class="text-blue-600 ml-1 hover:text-blue-800" title="Copy"><i class="fas fa-arrow-down"></i></button>
+                                        </th>
+                                        <th class="px-1 py-3 w-28 text-center border-b bg-gray-100">
+                                            Keterampilan <button type="button" onclick="copyDown('b_k')" class="text-blue-600 ml-1 hover:text-blue-800" title="Copy"><i class="fas fa-arrow-down"></i></button>
+                                        </th>
+                                        <th class="px-2 py-3 w-32 border-b bg-gray-100 text-center font-bold text-emerald-800">PREDIKAT</th>
+                                        <th class="px-2 py-3 border-b bg-gray-100 min-w-[150px] font-bold text-gray-800">CATATAN</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="bulk-tbody" class="divide-y divide-gray-100 bg-white"></tbody>
+                            </table>
+                        </div>
+                        
+                        <div id="bulk-empty-msg" class="hidden py-12 text-center text-gray-400 italic">
+                            Tidak ada data siswa di kelas ini. Silakan import di menu Data Siswa.
+                        </div>
+
+                        <button type="submit" class="mt-6 w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg shadow-emerald-200 transition-all flex items-center justify-center gap-2 transform hover:-translate-y-1">
+                            <i class="fas fa-save"></i> Simpan Semua Nilai Kelas
+                        </button>
+                    </form>
+                </div>
+
+                <div class="print-area mt-8">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                        <div class="flex justify-between items-center mb-6 border-b pb-4 no-print">
+                            <h3 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                                <i class="fas fa-clipboard-list text-emerald-600"></i> Rekapitulasi <span id="rekap-class-label" class="text-emerald-700"></span>
+                            </h3>
+                            <button onclick="clearClassData()" class="text-xs text-red-500 hover:text-red-700 hover:bg-red-50 px-3 py-1 rounded border border-red-100">Hapus Data</button>
+                        </div>
+                        <div class="hidden print-block text-center mb-6"><h2 class="text-2xl font-bold text-gray-800">REKAPITULASI NILAI PAI</h2><p class="text-sm">Kelas: <span id="print-class"></span> | Elemen: <span id="print-element"></span></p></div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left border-collapse border border-gray-300" id="rekap-table">
+                                <thead>
+                                    <tr class="bg-emerald-50 text-emerald-900 text-xs uppercase font-bold">
+                                        <th class="border border-gray-300 p-3 w-10 text-center">No</th>
+                                        <th class="border border-gray-300 p-3 w-1/4">Nama Siswa</th>
+                                        <th class="border border-gray-300 p-3 w-16 text-center bg-emerald-100">Nilai</th>
+                                        <th class="border border-gray-300 p-3 w-20 text-center">Predikat</th>
+                                        <th class="border border-gray-300 p-3 w-24 text-center">Sikap</th>
+                                        <th class="border border-gray-300 p-3">Deskripsi Capaian</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="rekap-tbody" class="divide-y divide-gray-200"></tbody>
+                            </table>
+                        </div>
+                        <div class="hidden print-block mt-12 flex justify-end px-10"><div class="text-center"><p>Guru Mata Pelajaran</p><br><br><br><p class="font-bold underline">( ........................................ )</p></div></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="view-kelola-tugas" class="hidden min-h-screen flex flex-col md:flex-row bg-gray-50">
+        <aside class="w-full md:w-64 bg-emerald-900 text-white flex-shrink-0 md:h-screen sticky top-0 z-50">
+            <div class="p-6 flex items-center gap-3 border-b border-emerald-800"><div class="w-8 h-8 bg-yellow-400 rounded-lg flex items-center justify-center text-emerald-900 font-bold shadow-lg">NI</div><span class="font-bold text-lg font-arabic">Dashboard Guru</span></div>
+            <nav class="p-4 space-y-2">
+                 <a href="#" onclick="switchView('view-guru')" class="flex items-center gap-3 p-3 rounded-xl hover:bg-emerald-800 text-emerald-100 transition-all"><i class="fas fa-edit w-5 text-center"></i> Input Nilai</a>
+                 <a href="#" onclick="switchView('view-kelola-tugas')" class="nav-item active flex items-center gap-3 p-3 rounded-xl transition-all bg-emerald-800 text-white shadow-md"><i class="fas fa-link w-5 text-center"></i> Kelola Tugas</a>
+                 <a href="#" onclick="switchView('view-data-siswa')" class="flex items-center gap-3 p-3 rounded-xl hover:bg-emerald-800 text-emerald-100 transition-all"><i class="fas fa-users w-5 text-center"></i> Data Siswa</a>
+                 <a href="#" onclick="switchView('view-landing')" class="flex items-center gap-3 p-3 rounded-xl hover:bg-emerald-800 text-emerald-100 transition-all"><i class="fas fa-home w-5 text-center"></i> Home</a>
+            </nav>
+        </aside>
+
+        <main class="flex-1 p-4 md:p-8 overflow-y-auto w-full">
+            <header class="flex justify-between items-center mb-8">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-800 font-arabic">Kelola Tugas & Materi</h2>
+                    <p class="text-gray-500 text-sm">Bagikan materi atau form tugas untuk siswa</p>
+                </div>
+            </header>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-1">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-emerald-100 sticky top-4">
+                        <h3 class="font-bold text-emerald-800 mb-4 border-b pb-2">Buat Tugas Baru</h3>
+                        <form onsubmit="handleSaveTask(event)">
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 mb-1">Judul Tugas/Materi</label>
+                                    <input type="text" id="task-title" class="w-full p-3 rounded-xl border bg-gray-50 focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Cth: Ulangan Harian BAB 1" required>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 mb-1">Deskripsi Tugas</label>
+                                    <textarea id="task-desc" rows="3" class="w-full p-3 rounded-xl border bg-gray-50 focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Cth: Silakan kerjakan tugas di link Google Form di bawah ini." required></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 mb-1">Link Tugas (Google Form/Drive dll)</label>
+                                    <input type="url" id="task-link" class="w-full p-3 rounded-xl border bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="https://forms.gle/..." required>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 mb-1">Untuk Kelas</label>
+                                    <select id="task-class" class="w-full p-3 rounded-xl border bg-gray-50 outline-none custom-select"></select>
+                                </div>
+                                <button type="submit" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg transition-all">
+                                    <i class="fas fa-paper-plane mr-2"></i> Kirim Tugas
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-2">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-emerald-100">
+                        <h3 class="font-bold text-gray-800 mb-4">Daftar Tugas Aktif</h3>
+                        <div id="task-list-container" class="space-y-3">
+                            <p class="text-gray-400 text-center italic py-8">Belum ada tugas yang dibuat.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="modal-pengumpulan" class="hidden fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4 fade-in">
+                <div class="bg-white rounded-2xl p-6 w-full max-w-3xl max-h-[80vh] flex flex-col">
+                    <div id="modal-pengumpulan-header" class="flex justify-between items-center mb-4">
+                        </div>
+                    <div class="overflow-y-auto flex-1 border rounded-lg">
+                        <table class="w-full text-sm text-left">
+                            <thead class="bg-gray-50 sticky top-0 shadow-sm text-xs uppercase text-gray-600">
+                                <tr>
+                                    <th class="p-3 border-b">Nama Siswa</th>
+                                    <th class="p-3 border-b">Kelas</th>
+                                    <th class="p-3 border-b">Waktu Pengumpulan</th>
+                                    <th class="p-3 border-b text-center">Bukti / Keterangan</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pengumpulan-tbody" class="divide-y divide-gray-100">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <div id="view-data-siswa" class="hidden min-h-screen flex flex-col md:flex-row bg-gray-50">
+        <aside class="w-full md:w-64 bg-emerald-900 text-white flex-shrink-0 md:h-screen sticky top-0 z-50">
+             <div class="p-6 flex items-center gap-3 border-b border-emerald-800"><div class="w-8 h-8 bg-yellow-400 rounded-lg flex items-center justify-center text-emerald-900 font-bold shadow-lg">NI</div><span class="font-bold text-lg font-arabic">Dashboard Guru</span></div>
+            <nav class="p-4 space-y-2">
+                 <a href="#" onclick="switchView('view-guru')" class="flex items-center gap-3 p-3 rounded-xl hover:bg-emerald-800 text-emerald-100 transition-all"><i class="fas fa-edit w-5 text-center"></i> Input Nilai</a>
+                 <a href="#" onclick="switchView('view-data-siswa')" class="bg-emerald-800 text-white flex items-center gap-3 p-3 rounded-xl transition-all shadow-md"><i class="fas fa-users w-5 text-center"></i> Data Siswa</a>
+                 <a href="#" onclick="switchView('view-manajemen-data')" class="flex items-center gap-3 p-3 rounded-xl hover:bg-emerald-800 text-emerald-100 transition-all"><i class="fas fa-database w-5 text-center"></i> Backup & Data</a>
+            </nav>
+        </aside>
+        
+        <main class="flex-1 p-4 md:p-8 w-full">
+            <header class="mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 font-arabic">Manajemen Data Siswa</h2>
+                <p class="text-gray-500 text-sm">Kelola data siswa: input manual atau upload Excel.</p>
+            </header>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-emerald-100 h-fit">
+                    <h3 class="font-bold text-emerald-800 mb-4 border-b pb-2 flex items-center gap-2">
+                        <i class="fas fa-user-plus"></i> Tambah Siswa Manual
+                    </h3>
+                    <form onsubmit="handleAddStudent(event)">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 mb-1">Kelas</label>
+                                <select id="manual-student-class" class="w-full p-3 rounded-xl border bg-gray-50 outline-none custom-select" required></select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 mb-1">Nama Lengkap</label>
+                                <input type="text" id="manual-student-name" class="w-full p-3 rounded-xl border bg-gray-50 outline-none focus:ring-2 focus:ring-emerald-500" placeholder="Contoh: Ahmad Dahlan" required>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 mb-1">NIS (Opsional)</label>
+                                <input type="text" id="manual-student-nis" class="w-full p-3 rounded-xl border bg-gray-50 outline-none focus:ring-2 focus:ring-emerald-500" placeholder="12345">
+                            </div>
+                            <button type="submit" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg transition-all flex items-center justify-center gap-2">
+                                <i class="fas fa-plus-circle"></i> Simpan Siswa
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-emerald-100 h-fit text-center flex flex-col justify-center items-center">
+                    <div class="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mb-4 text-green-600">
+                        <i class="fas fa-file-excel text-3xl"></i>
+                    </div>
+                    <h3 class="font-bold text-gray-800 mb-2">Import Excel (.xlsx)</h3>
+                    <p class="text-xs text-gray-500 mb-6 max-w-xs">
+                        Gunakan file Excel dengan kolom: <strong>No, Nama, NIS, Kelas</strong> untuk upload banyak data sekaligus.
+                    </p>
+                    
+                    <label class="relative cursor-pointer bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition-all w-full md:w-auto">
+                        <span class="flex items-center justify-center gap-2"><i class="fas fa-upload"></i> Pilih File</span>
+                        <input type="file" id="excel-file" class="hidden" accept=".xlsx, .xls" onchange="handleExcelUpload(event)">
+                    </label>
+                    <div id="upload-status" class="mt-4 text-xs text-green-600 hidden"></div>
+                </div>
+            </div>
+
+            <div class="mt-8">
+                <div class="flex justify-between items-center mb-4 px-2">
+                    <h3 class="font-bold text-gray-800">Daftar Siswa Tersimpan</h3>
+                    <button onclick="if(confirm('Hapus semua data siswa?')) { dbSiswa=[]; saveData(); renderStudentPreview(); }" class="text-xs text-red-500 hover:underline">Hapus Semua</button>
+                </div>
+                
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="max-h-[400px] overflow-y-auto">
+                        <table class="w-full text-sm text-left">
+                            <thead class="bg-gray-50 text-gray-700 uppercase text-xs sticky top-0 z-10">
+                                <tr>
+                                    <th class="px-6 py-3 w-10">No</th>
+                                    <th class="px-6 py-3">Nama</th>
+                                    <th class="px-6 py-3">Kelas</th>
+                                    <th class="px-6 py-3">NIS</th>
+                                    <th class="px-6 py-3 text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="student-preview-body" class="divide-y divide-gray-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="view-manajemen-data" class="hidden min-h-screen flex flex-col md:flex-row bg-gray-50">
+        <aside class="w-full md:w-64 bg-emerald-900 text-white flex-shrink-0 md:h-screen sticky top-0 z-50">
+             <div class="p-6 flex items-center gap-3 border-b border-emerald-800"><div class="w-8 h-8 bg-yellow-400 rounded-lg flex items-center justify-center text-emerald-900 font-bold shadow-lg">NI</div><span class="font-bold text-lg font-arabic">Dashboard Guru</span></div>
+            <nav class="p-4 space-y-2">
+                 <a href="#" onclick="switchView('view-guru')" class="flex items-center gap-3 p-3 rounded-xl hover:bg-emerald-800 text-emerald-100 transition-all"><i class="fas fa-edit w-5 text-center"></i> Input Nilai</a>
+                 <a href="#" onclick="switchView('view-manajemen-data')" class="bg-emerald-800 text-white flex items-center gap-3 p-3 rounded-xl transition-all shadow-md"><i class="fas fa-database w-5 text-center"></i> Backup & Data</a>
+            </nav>
+        </aside>
+        
+        <main class="flex-1 p-4 md:p-8 w-full flex items-center justify-center">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl w-full">
+                <div class="bg-white p-8 rounded-3xl shadow-sm border border-emerald-100 text-center hover:shadow-md transition-shadow">
+                    <div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4 text-blue-600"><i class="fas fa-download text-2xl"></i></div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Backup Data (Export)</h3>
+                    <p class="text-sm text-gray-500 mb-6">Unduh seluruh data nilai, siswa, dan tugas dalam format JSON untuk cadangan.</p>
+                    <button onclick="downloadBackup()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-colors">Download JSON</button>
+                </div>
+
+                <div class="bg-white p-8 rounded-3xl shadow-sm border border-emerald-100 text-center hover:shadow-md transition-shadow">
+                    <div class="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-4 text-amber-600"><i class="fas fa-upload text-2xl"></i></div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Restore Data (Import)</h3>
+                    <p class="text-sm text-gray-500 mb-6">Pulihkan data dari file JSON cadangan yang pernah Anda unduh sebelumnya.</p>
+                    <label class="block w-full cursor-pointer py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl transition-colors">
+                        <span>Pilih File JSON</span>
+                        <input type="file" class="hidden" accept=".json" onchange="restoreBackup(event)">
+                    </label>
+                </div>
+                
+                <div class="md:col-span-2 text-center">
+                    <button onclick="hardReset()" class="text-red-500 hover:text-red-700 text-sm underline">Reset/Hapus Semua Data Aplikasi (Bahaya)</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="view-siswa-login" class="hidden min-h-screen flex items-center justify-center px-4 relative fade-in islamic-bg">
+        <button onclick="switchView('view-login-options')" class="absolute top-6 left-6 text-white/80 hover:text-white hover:bg-white/10 p-2 rounded-full transition-all"><i class="fas fa-arrow-left text-xl"></i></button>
+        <div class="glass-card p-8 rounded-3xl w-full max-w-md border-t-4 border-yellow-400">
+            <div class="w-20 h-20 bg-yellow-50 rounded-full flex items-center justify-center mx-auto mb-4 text-yellow-600 shadow-inner"><i class="fas fa-user-graduate text-3xl"></i></div>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2 font-arabic text-center">Login Siswa</h2>
+            <p class="text-gray-500 text-sm mb-8 text-center">Pilih kelas dan nama untuk melihat nilai.</p>
+            
+            <form onsubmit="handleSiswaLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Pilih Kelas</label>
+                    <select id="login-siswa-kelas" onchange="populateSiswaNameSelect()" class="w-full p-4 rounded-xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-yellow-500 custom-select cursor-pointer" required>
+                        <option value="">-- Kelas --</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Pilih Nama</label>
+                    <select id="login-siswa-nama" class="w-full p-4 rounded-xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-yellow-500 custom-select cursor-pointer disabled:bg-gray-100" disabled required>
+                        <option value="">-- Pilih Kelas Dahulu --</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full py-3 bg-yellow-500 hover:bg-yellow-600 text-white font-bold rounded-xl shadow-lg shadow-yellow-200 transition-all transform hover:-translate-y-1 mt-4">Lihat Raporku</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="view-siswa-dashboard" class="hidden min-h-screen bg-gray-50">
+        <header class="bg-emerald-800 text-white p-6 pb-24 rounded-b-[3rem] shadow-xl relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -mr-20 -mt-20"></div>
+            <div class="max-w-4xl mx-auto relative z-10">
+                <div class="flex justify-between items-start">
+                    <button onclick="logout()" class="bg-white/20 hover:bg-white/30 p-2 rounded-lg backdrop-blur-sm transition text-sm"><i class="fas fa-arrow-left"></i> Keluar</button>
+                    <div class="text-right">
+                        <h1 class="text-2xl font-bold font-arabic">Assalamu'alaikum</h1>
+                        <p id="student-dash-name" class="text-yellow-300 font-medium text-lg"></p>
+                        <p id="student-dash-class" class="text-emerald-200 text-sm"></p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="max-w-4xl mx-auto px-4 -mt-16 pb-12 relative z-20 space-y-6">
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center">
+                    <span class="text-gray-400 text-xs uppercase font-bold tracking-wider">Rata-Rata</span>
+                    <span id="student-avg-score" class="text-3xl font-bold text-emerald-600 my-1">-</span>
+                    <span class="text-xs text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Nilai Gabungan</span>
+                </div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center">
+                    <span class="text-gray-400 text-xs uppercase font-bold tracking-wider">Predikat</span>
+                    <span id="student-predicate" class="text-3xl font-bold text-yellow-500 my-1">-</span>
+                    <span class="text-xs text-yellow-600 bg-yellow-50 px-2 py-0.5 rounded-full">Sikap Umum</span>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+                <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2"><i class="fas fa-chart-pie text-emerald-500"></i> Grafik Kompetensi</h3>
+                <div class="h-64 relative">
+                    <canvas id="studentChart"></canvas>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+                <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <i class="fas fa-clipboard-check text-blue-500"></i> Tugas Kelas
+                </h3>
+                <div id="student-task-list" class="space-y-3">
+                    <p class="text-center text-gray-400 text-sm py-4">Tidak ada tugas aktif.</p>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-bold text-gray-800 flex items-center gap-2"><i class="fas fa-list-alt text-purple-500"></i> Rapor Detail</h3>
+                    <button onclick="window.print()" class="text-xs bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-lg transition"><i class="fas fa-print"></i> Cetak</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-gray-50 text-gray-600 text-xs uppercase">
+                            <tr>
+                                <th class="p-3 rounded-l-lg">Elemen</th>
+                                <th class="p-3 text-center">Pengetahuan</th>
+                                <th class="p-3 text-center">Keterampilan</th>
+                                <th class="p-3 text-right rounded-r-lg">Ket.</th>
+                            </tr>
+                        </thead>
+                        <tbody id="student-rapor-body" class="divide-y divide-gray-50"></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // --- KONFIGURASI & VARIABEL GLOBAL ---
+        const CLASS_LIST = ['X-1', 'X-2', 'X-3', 'X-4', 'X-5', 'X-6', 'X-7', 'X-8'];
+        const ELEMENTS = [
+            { id: 'quran', name: "BAB 1", desc: "Al-Qur'an: Membaca & Menghafal" },
+            { id: 'hadis', name: "BAB 2", desc: "Hadis: Analisis Hadis Nabi" },
+            { id: 'aqidah', name: "BAB 3", desc: "Aqidah: Keimanan & Tauhid" },
+            { id: 'akhlak', name: "BAB 4", desc: "Akhlak: Perilaku Terpuji" },
+            { id: 'fiqih', name: "BAB 5", desc: "Fiqih: Hukum Islam & Ibadah" },
+            { id: 'spi', name: "BAB 6", desc: "SPI: Sejarah Peradaban Islam" }
+        ];
+
+        // INITIAL DATA FROM EXCEL
+        const INITIAL_STUDENTS = [
+            { nama: "ACHMAD GEISHA DWI WILDAN", kelas: "X-1", nis: "-" },
+            { nama: "AGIL AZHAR AMIN", kelas: "X-1", nis: "-" },
+            { nama: "ALFI FITRIATUL LAILA", kelas: "X-1", nis: "-" },
+            { nama: "AUREL EKA WULANDARI", kelas: "X-1", nis: "-" },
+            { nama: "CAHYADI SUDRAJAT", kelas: "X-1", nis: "-" },
+            { nama: "CRESENSIA HANA PURI NARESWARI", kelas: "X-1", nis: "-" },
+            { nama: "DINDA NURLAILY", kelas: "X-1", nis: "-" },
+            { nama: "DIVO OKA SAPUTRA", kelas: "X-1", nis: "-" },
+            { nama: "ELYSIA PUTRI NAILAH", kelas: "X-1", nis: "-" },
+            { nama: "EVAN PUTRA CHRISTIAN", kelas: "X-1", nis: "-" },
+            { nama: "FLORENSIA YUANITA WIBISONO", kelas: "X-1", nis: "-" },
+            { nama: "GABRIELLA NOVELINDA YORDANI", kelas: "X-1", nis: "-" },
+            { nama: "GALANTIO PUTRA BERLIAN", kelas: "X-1", nis: "-" },
+            { nama: "GLADIS HAWA AISWARA", kelas: "X-1", nis: "-" },
+            { nama: "HAFIZA NUR MAULIDIA", kelas: "X-1", nis: "-" },
+            { nama: "JEANNE MARSIANA SABU BEOANG", kelas: "X-1", nis: "-" },
+            { nama: "JESICA KAROLINA", kelas: "X-1", nis: "-" },
+            { nama: "JOSHEFIN MARGARETHA ELVIRA", kelas: "X-1", nis: "-" },
+            { nama: "KEYLA HARZA PUTRI", kelas: "X-1", nis: "-" },
+            { nama: "KUKOH JANUR WIDHI ANSYAH", kelas: "X-1", nis: "-" },
+            { nama: "MAKARINA PATI KELEN", kelas: "X-1", nis: "-" },
+            { nama: "MANDA CHERRY KUMARA", kelas: "X-1", nis: "-" },
+            { nama: "MERLYANA FRANSISKUS", kelas: "X-1", nis: "-" },
+            { nama: "MOCHAMAD NOVRIL MAULANA SAPUTRA", kelas: "X-1", nis: "-" },
+            { nama: "MOCHAMMAD FRISKO CAHYONO", kelas: "X-1", nis: "-" },
+            { nama: "MUHAMAD IZAL MAULUDIN", kelas: "X-1", nis: "-" },
+            { nama: "NADIFA DZAKIRA AFTANI", kelas: "X-1", nis: "-" },
+            { nama: "NANDA ERWIN YUDHA HERNANDO", kelas: "X-1", nis: "-" },
+            { nama: "NASYA FAJAR RANI", kelas: "X-1", nis: "-" },
+            { nama: "NIMAS AYU CAROLIEN SELAN", kelas: "X-1", nis: "-" },
+            { nama: "QIESHA ALMIRA PUTRI", kelas: "X-1", nis: "-" },
+            { nama: "ROIFAH", kelas: "X-1", nis: "-" },
+            { nama: "SELFIA AULINA FATMAWATI", kelas: "X-1", nis: "-" },
+            { nama: "YASHINTA PUTRI YUVI DESTYANNANDA", kelas: "X-1", nis: "-" },
+            { nama: "YOSIA ABIB DRINKSANI EKANATA", kelas: "X-1", nis: "-" },
+            { nama: "ZEVANA TESSALONIKA KAMILA WARDHANI", kelas: "X-1", nis: "-" },
+            { nama: "ADELIA IKA JUNI HAMDANI", kelas: "X-2", nis: "-" },
+            { nama: "AINUN SAFIRUDIN", kelas: "X-2", nis: "-" },
+            { nama: "ALEN FEBYAN SYAHPUTRA", kelas: "X-2", nis: "-" },
+            { nama: "ALVINO ARZAQI SUWANDI", kelas: "X-2", nis: "-" },
+            { nama: "ANITA MARIS SUSTIKA", kelas: "X-2", nis: "-" },
+            { nama: "ARYA JURJIS LABIB", kelas: "X-2", nis: "-" },
+            { nama: "AURA QUINSHA AZZAHRA", kelas: "X-2", nis: "-" },
+            { nama: "AUREL AURA DARA", kelas: "X-2", nis: "-" },
+            { nama: "AYU DEWI WULANDARI", kelas: "X-2", nis: "-" },
+            { nama: "BHISMA BIMANTARA", kelas: "X-2", nis: "-" },
+            { nama: "CHELO NUR BAGAS WORO PUTRO", kelas: "X-2", nis: "-" },
+            { nama: "CUCUN ATIKA JAUHARO", kelas: "X-2", nis: "-" },
+            { nama: "DELVINE MAYLIA INTAN", kelas: "X-2", nis: "-" },
+            { nama: "DESVITA APSARI WIJAYA", kelas: "X-2", nis: "-" },
+            { nama: "DEWI AYU PUTRI RAMADANI", kelas: "X-2", nis: "-" },
+            { nama: "DITA MAYSAROH", kelas: "X-2", nis: "-" },
+            { nama: "EKA SHOLEHA DEWI NOVITASARI", kelas: "X-2", nis: "-" },
+            { nama: "FANISA AULIA PUTRI", kelas: "X-2", nis: "-" },
+            { nama: "FERLINGGA ATASYA ROKHMAN", kelas: "X-2", nis: "-" },
+            { nama: "FIONA NURIL YUNINGTIAS", kelas: "X-2", nis: "-" },
+            { nama: "FITRI AR RAHMAH", kelas: "X-2", nis: "-" },
+            { nama: "GALIZA EFRITA WULANDARI", kelas: "X-2", nis: "-" },
+            { nama: "GEA REVANY ADISTYA", kelas: "X-2", nis: "-" },
+            { nama: "KHANSAA FAUZIAH FAWWAZ", kelas: "X-2", nis: "-" },
+            { nama: "MOH SUBHAN HIDAYAT", kelas: "X-2", nis: "-" },
+            { nama: "MOHAMMAD LIONEL MESSI RAMADHAN", kelas: "X-2", nis: "-" },
+            { nama: "MUH HONEY QIAMU LAIL", kelas: "X-2", nis: "-" },
+            { nama: "NANDA WARDATUL MILA YANTI", kelas: "X-2", nis: "-" },
+            { nama: "RAHMAT TSANI AKBAR", kelas: "X-2", nis: "-" },
+            { nama: "RIZQI DESTA LOVASKO", kelas: "X-2", nis: "-" },
+            { nama: "SESILIA EKA RAMADHANI", kelas: "X-2", nis: "-" },
+            { nama: "SINTA DWI SETIAWATI", kelas: "X-2", nis: "-" },
+            { nama: "VYRRA RAHMADHANI", kelas: "X-2", nis: "-" },
+            { nama: "WIDIYA PUTRI PUJA SAFIRA", kelas: "X-2", nis: "-" },
+            { nama: "ZIDNI ILMA AKBAR", kelas: "X-2", nis: "-" },
+            { nama: "ZIVANA PUTRI ANGGREINI", kelas: "X-2", nis: "-" },
+            { nama: "ABDUL QODIR JAELANI", kelas: "X-3", nis: "-" },
+            { nama: "ADELA SALSABILA", kelas: "X-3", nis: "-" },
+            { nama: "AIRA DWI RAMADHANI", kelas: "X-3", nis: "-" },
+            { nama: "AISAHTUL JANNAH", kelas: "X-3", nis: "-" },
+            { nama: "ANANDA AISYAH PUTRI", kelas: "X-3", nis: "-" },
+            { nama: "ANWAR IBRAHIM", kelas: "X-3", nis: "-" },
+            { nama: "ARIAL SISWOYO", kelas: "X-3", nis: "-" },
+            { nama: "CIKA DWI PATTRICIA", kelas: "X-3", nis: "-" },
+            { nama: "DINAH FILZAH SYAFIQAH", kelas: "X-3", nis: "-" },
+            { nama: "DYO MIRSA IRAWAN", kelas: "X-3", nis: "-" },
+            { nama: "EGHI DWI MAULANA", kelas: "X-3", nis: "-" },
+            { nama: "ELSA REGINA PUTRI", kelas: "X-3", nis: "-" },
+            { nama: "FAREL GHATAN IRAWAN", kelas: "X-3", nis: "-" },
+            { nama: "FARRAS QIANDRA ALKAVANU", kelas: "X-3", nis: "-" },
+            { nama: "FITRI HALIMATUS ZAHRO", kelas: "X-3", nis: "-" },
+            { nama: "FRISKA WAHYUNING LESTARI", kelas: "X-3", nis: "-" },
+            { nama: "MERLINDA NATACHA EKA PUTRI", kelas: "X-3", nis: "-" },
+            { nama: "MIFTAKHUL JANAH", kelas: "X-3", nis: "-" },
+            { nama: "MUAN FEBRIHASAN", kelas: "X-3", nis: "-" },
+            { nama: "MUHAMAD ILHAM ALFARIZI", kelas: "X-3", nis: "-" },
+            { nama: "MUHAMMAD ADITYA PRATAMA", kelas: "X-3", nis: "-" },
+            { nama: "MUHAMMAD DAVID ANDREAN", kelas: "X-3", nis: "-" },
+            { nama: "NANIK DWI LESTARI", kelas: "X-3", nis: "-" },
+            { nama: "NAYLA IZZATI AULIA", kelas: "X-3", nis: "-" },
+            { nama: "NINDY FEBRIANI MAULIDIA", kelas: "X-3", nis: "-" },
+            { nama: "OKTAVIYANI TRI UTAMI", kelas: "X-3", nis: "-" },
+            { nama: "OKTAVIYANTI DWI UTAMI", kelas: "X-3", nis: "-" },
+            { nama: "PUTRI DEWI ASURA ADI CHANDRA", kelas: "X-3", nis: "-" },
+            { nama: "RASYA ADITYA DHARMA PUTRA", kelas: "X-3", nis: "-" },
+            { nama: "RISMA AMANDA", kelas: "X-3", nis: "-" },
+            { nama: "SOFIA MEI SURYANI", kelas: "X-3", nis: "-" },
+            { nama: "VIKO BALKIS FEBRIANA KALIMANTARI", kelas: "X-3", nis: "-" },
+            { nama: "WILDA DWI SURYANI", kelas: "X-3", nis: "-" },
+            { nama: "YASMINE ADDINA ZAIN", kelas: "X-3", nis: "-" },
+            { nama: "YUNITA VIRGINIA", kelas: "X-3", nis: "-" },
+            { nama: "ZILVANY DIA RIZKI AZZAHRAH", kelas: "X-3", nis: "-" },
+            { nama: "ADELIA RACHEL MEYSIA FIRSTI", kelas: "X-4", nis: "-" },
+            { nama: "ADINDA NASYA AULIA", kelas: "X-4", nis: "-" },
+            { nama: "AIRA NUR RAHMAH", kelas: "X-4", nis: "-" },
+            { nama: "AKHMAD FATONI", kelas: "X-4", nis: "-" },
+            { nama: "ALFIA DEWI NAFIAH", kelas: "X-4", nis: "-" },
+            { nama: "ANANDA ARIL PUTRA PRATAMA", kelas: "X-4", nis: "-" },
+            { nama: "ANFIL JENNATUL FAHIRO", kelas: "X-4", nis: "-" },
+            { nama: "ARSIKHA MEELA OKTAVIA", kelas: "X-4", nis: "-" },
+            { nama: "AURA ANGGELLITA ALIANSA", kelas: "X-4", nis: "-" },
+            { nama: "CHIKA RAMADHANI", kelas: "X-4", nis: "-" },
+            { nama: "ELFREDA NAJAH SASHA POESUCHA", kelas: "X-4", nis: "-" },
+            { nama: "FAREL RAFKA ARDIANSYAH", kelas: "X-4", nis: "-" },
+            { nama: "FERDYAN TRI PRASETYO", kelas: "X-4", nis: "-" },
+            { nama: "FITRIA NUR SEPTIYASA", kelas: "X-4", nis: "-" },
+            { nama: "GALANG RIDHO ANGGORO", kelas: "X-4", nis: "-" },
+            { nama: "GALO PURWADI ANSAH", kelas: "X-4", nis: "-" },
+            { nama: "LIFI NUR AINI", kelas: "X-4", nis: "-" },
+            { nama: "MAULANA AKBAR", kelas: "X-4", nis: "-" },
+            { nama: "MAYZAHRO CAHYA KARTIKA PUTRI", kelas: "X-4", nis: "-" },
+            { nama: "MOHAMAD PUTRA GHOFIN", kelas: "X-4", nis: "-" },
+            { nama: "MOHAMMAD ROQIB ALI BASHOR", kelas: "X-4", nis: "-" },
+            { nama: "MONICA PUTRI ANASTASYA", kelas: "X-4", nis: "-" },
+            { nama: "MUHAMMAD AFIF", kelas: "X-4", nis: "-" },
+            { nama: "NADZWA AUREL NUR NAZILLAH", kelas: "X-4", nis: "-" },
+            { nama: "NOVA AVRILLISA", kelas: "X-4", nis: "-" },
+            { nama: "NOVELIANA LISMAWATI", kelas: "X-4", nis: "-" },
+            { nama: "NUR LAILATUL QOMARIAH", kelas: "X-4", nis: "-" },
+            { nama: "PUTRI DWI ANDINI", kelas: "X-4", nis: "-" },
+            { nama: "RAHMATUL WAHYU SYIVAROH", kelas: "X-4", nis: "-" },
+            { nama: "REVVY PURNAMASARI", kelas: "X-4", nis: "-" },
+            { nama: "SHOFA DELLA RISTA", kelas: "X-4", nis: "-" },
+            { nama: "SITI UMAISYAROH", kelas: "X-4", nis: "-" },
+            { nama: "SOFIAN AHMAD HASAN", kelas: "X-4", nis: "-" },
+            { nama: "TANO FLORADANASTYA", kelas: "X-4", nis: "-" },
+            { nama: "VELLY MILA SHYERINA", kelas: "X-4", nis: "-" },
+            { nama: "VIONA NUR EKA PRATIWI", kelas: "X-4", nis: "-" },
+            { nama: "ABIL FAKHUROZI TAHIR", kelas: "X-5", nis: "-" },
+            { nama: "AISYAH UMI ZAHRO", kelas: "X-5", nis: "-" },
+            { nama: "AMELIA AZZAHRA", kelas: "X-5", nis: "-" },
+            { nama: "ARDELIA TSABITAH", kelas: "X-5", nis: "-" },
+            { nama: "BUNGA SILVI FANESA", kelas: "X-5", nis: "-" },
+            { nama: "DEVANO ERIC SEBASTIAN", kelas: "X-5", nis: "-" },
+            { nama: "DIKI IRAWAN", kelas: "X-5", nis: "-" },
+            { nama: "DIMAS ADWA RAMADHAN", kelas: "X-5", nis: "-" },
+            { nama: "DINDA AYU LESTARI", kelas: "X-5", nis: "-" },
+            { nama: "DWI INDAH SARI", kelas: "X-5", nis: "-" },
+            { nama: "FREEYA INSYIRAH FILZIE", kelas: "X-5", nis: "-" },
+            { nama: "HOZAKY ADITIA", kelas: "X-5", nis: "-" },
+            { nama: "IHWANDRA RENATA ARDIANSYAH", kelas: "X-5", nis: "-" },
+            { nama: "INDAH SHOLEHA MAHARANY GUNAWAN", kelas: "X-5", nis: "-" },
+            { nama: "INTAN", kelas: "X-5", nis: "-" },
+            { nama: "LAILI DWI NUR FITRIA", kelas: "X-5", nis: "-" },
+            { nama: "MARDA SARI", kelas: "X-5", nis: "-" },
+            { nama: "MAYLA PUTRI PERDANI", kelas: "X-5", nis: "-" },
+            { nama: "MOCHAMAD KHADAFI", kelas: "X-5", nis: "-" },
+            { nama: "MUHAMMAD AKBAR DANIEL HARYENT", kelas: "X-5", nis: "-" },
+            { nama: "MUHAMMAD RISKY NUR ARDIANSYAH", kelas: "X-5", nis: "-" },
+            { nama: "NANDA ALDI RESTI PRATAMA", kelas: "X-5", nis: "-" },
+            { nama: "NASYA AULIA RAMADHANI", kelas: "X-5", nis: "-" },
+            { nama: "NAURAH IFFAH FAKHIRAH", kelas: "X-5", nis: "-" },
+            { nama: "NURIYATUL DHOIFA", kelas: "X-5", nis: "-" },
+            { nama: "PUTRI AGNIE DEMAYRA", kelas: "X-5", nis: "-" },
+            { nama: "SEPTIAN KHOLIFATUS SAADAH", kelas: "X-5", nis: "-" },
+            { nama: "SHECILIA PUTRI", kelas: "X-5", nis: "-" },
+            { nama: "SINTIA TRI AGUSTIN", kelas: "X-5", nis: "-" },
+            { nama: "SITI NUR HOLIFAH", kelas: "X-5", nis: "-" },
+            { nama: "TOMY SETIAWAN", kelas: "X-5", nis: "-" },
+            { nama: "TRI ANGGA ALFARIZI", kelas: "X-5", nis: "-" },
+            { nama: "VALENSIYA AFGASARI", kelas: "X-5", nis: "-" },
+            { nama: "YELSI EFRILLIYA", kelas: "X-5", nis: "-" },
+            { nama: "YUNITA AYU KUMALA", kelas: "X-5", nis: "-" },
+            { nama: "ADINDA NURUL ISTIQOMAH", kelas: "X-6", nis: "-" },
+            { nama: "AHMAD AMRULLAH ASAD", kelas: "X-6", nis: "-" },
+            { nama: "ANATASYA", kelas: "X-6", nis: "-" },
+            { nama: "ANDILA NOER BERLIANA", kelas: "X-6", nis: "-" },
+            { nama: "ANDREAN SYAHPUTRA", kelas: "X-6", nis: "-" },
+            { nama: "ARYA ABIYYU PRANAJA", kelas: "X-6", nis: "-" },
+            { nama: "AULIA SYAFIRA PUTRI YORDIANSYAH", kelas: "X-6", nis: "-" },
+            { nama: "BAHTIAR YUSUF HABIBI", kelas: "X-6", nis: "-" },
+            { nama: "BELLA ALIFIA PRISTY", kelas: "X-6", nis: "-" },
+            { nama: "BILQIS NAFISA ESTIANTY", kelas: "X-6", nis: "-" },
+            { nama: "CAHYA SATRIYA VIRA BAKTI", kelas: "X-6", nis: "-" },
+            { nama: "CHIKA QOTRUNNADA RAMADHANI", kelas: "X-6", nis: "-" },
+            { nama: "CINTA MELLANI FEBRIASYIFA", kelas: "X-6", nis: "-" },
+            { nama: "DIAH AYU TRISNA SIWI", kelas: "X-6", nis: "-" },
+            { nama: "ESTA URMANI", kelas: "X-6", nis: "-" },
+            { nama: "FAHMI AGUNG DERMAWAN", kelas: "X-6", nis: "-" },
+            { nama: "FAJAR BANYU WIJAYA", kelas: "X-6", nis: "-" },
+            { nama: "FARID EVAN PRANAJA ISAD", kelas: "X-6", nis: "-" },
+            { nama: "GHEA ANANTA SALSABILLA PUTRI BUDIANTO", kelas: "X-6", nis: "-" },
+            { nama: "GICELA AULIANDISA ARTARI", kelas: "X-6", nis: "-" },
+            { nama: "GISKA TRI DEWI ROHMAH", kelas: "X-6", nis: "-" },
+            { nama: "GLADIS AMELIA AMANDA PUTRI", kelas: "X-6", nis: "-" },
+            { nama: "IRMA ZULIANTI", kelas: "X-6", nis: "-" },
+            { nama: "JUAN AUBIN FAIRUZ", kelas: "X-6", nis: "-" },
+            { nama: "KHARISA OLIVIA WULANDARI", kelas: "X-6", nis: "-" },
+            { nama: "LAILA TRI WAHYUNI", kelas: "X-6", nis: "-" },
+            { nama: "LEVI OKTAFIANSYA", kelas: "X-6", nis: "-" },
+            { nama: "MUHAMMAD ALVITO ANDRIANSYAH", kelas: "X-6", nis: "-" },
+            { nama: "MUHAMMAD ASEP MAULANA", kelas: "X-6", nis: "-" },
+            { nama: "NANDA DEWI OKTARANI", kelas: "X-6", nis: "-" },
+            { nama: "PUTRI AHZARO ISNAINI", kelas: "X-6", nis: "-" },
+            { nama: "SALSABILA FAISATUS KAROMA", kelas: "X-6", nis: "-" },
+            { nama: "SAMIDATUL AMALIA", kelas: "X-6", nis: "-" },
+            { nama: "SHEELA NATHANIA AZALEA RAMADHANIA", kelas: "X-6", nis: "-" },
+            { nama: "SITI NUR HOLISAH", kelas: "X-6", nis: "-" },
+            { nama: "VINA FITRIA ANGGRAENI", kelas: "X-6", nis: "-" },
+            { nama: "ACHMAD NAUFAL NAZHIF", kelas: "X-7", nis: "-" },
+            { nama: "ALDIANSYAH ANGGARA", kelas: "X-7", nis: "-" },
+            { nama: "ANDRIAN RICO HIDAYAT", kelas: "X-7", nis: "-" },
+            { nama: "AULIA JULY DWITARIZKI", kelas: "X-7", nis: "-" },
+            { nama: "AURELLIA NUR AZIZA", kelas: "X-7", nis: "-" },
+            { nama: "BAGUS ADI PRANATA", kelas: "X-7", nis: "-" },
+            { nama: "DIEGO FALEN IDFIANO WICAKSONO", kelas: "X-7", nis: "-" },
+            { nama: "EVAN MARVINO", kelas: "X-7", nis: "-" },
+            { nama: "FAHMI TAUFIK", kelas: "X-7", nis: "-" },
+            { nama: "FAHRIANSYAH", kelas: "X-7", nis: "-" },
+            { nama: "GIANINA MAHIRA", kelas: "X-7", nis: "-" },
+            { nama: "ISABILLAH AULIYA AGUSTIN", kelas: "X-7", nis: "-" },
+            { nama: "LINTANG OCKTININGTYA FIRDHA", kelas: "X-7", nis: "-" },
+            { nama: "LOLA ANGELINA DWI ISWANDOYO", kelas: "X-7", nis: "-" },
+            { nama: "LUNA TIARA SUKMA", kelas: "X-7", nis: "-" },
+            { nama: "M IBRAHIM MUWAFFIQ ARIFIN", kelas: "X-7", nis: "-" },
+            { nama: "MAISYIFA SALSABILA", kelas: "X-7", nis: "-" },
+            { nama: "MELVI ZIPPY MELLANIK", kelas: "X-7", nis: "-" },
+            { nama: "MUHAMMAD IZZA RAFIAH", kelas: "X-7", nis: "-" },
+            { nama: "NABIL AL FIKRI", kelas: "X-7", nis: "-" },
+            { nama: "NADIA PUTRI NURAMTI", kelas: "X-7", nis: "-" },
+            { nama: "NAURA SYAFINA BIWI ISTIANA SYAIFUL", kelas: "X-7", nis: "-" },
+            { nama: "NIKITA PUTRI APRILIA PRANOTO", kelas: "X-7", nis: "-" },
+            { nama: "NOVALIA WIDIASTUTIK", kelas: "X-7", nis: "-" },
+            { nama: "NUR AFITA RAMADHANI", kelas: "X-7", nis: "-" },
+            { nama: "PUTRI MAULIA HASANAH", kelas: "X-7", nis: "-" },
+            { nama: "QUINN NORIZ ELMIRA SANTOSO", kelas: "X-7", nis: "-" },
+            { nama: "RAFI LUKMAN AZIZ", kelas: "X-7", nis: "-" },
+            { nama: "RAIHAN FEBRIAN PRATAMA", kelas: "X-7", nis: "-" },
+            { nama: "REFIN NATUSHOLEHA", kelas: "X-7", nis: "-" },
+            { nama: "REVA MAULIDYA PRATAMA", kelas: "X-7", nis: "-" },
+            { nama: "RIA YUNIAR INDAH PUSPITASARI", kelas: "X-7", nis: "-" },
+            { nama: "RIFATUS SHOLIHAH", kelas: "X-7", nis: "-" },
+            { nama: "ROFITA MAULIDIAH SAHUDIN", kelas: "X-7", nis: "-" },
+            { nama: "SILA", kelas: "X-7", nis: "-" },
+            { nama: "SITI ROHMATUN BADRIYAH", kelas: "X-7", nis: "-" },
+            { nama: "ABI MANYU UMAR BENZEMA", kelas: "X-8", nis: "-" },
+            { nama: "ADRIAN HARTANTO", kelas: "X-8", nis: "-" },
+            { nama: "AI ROSA", kelas: "X-8", nis: "-" },
+            { nama: "ALVINO DWI OKTAVIAN", kelas: "X-8", nis: "-" },
+            { nama: "AMELIA AZKA HAFIZHAH", kelas: "X-8", nis: "-" },
+            { nama: "AURELIA PASYA ENJELICA", kelas: "X-8", nis: "-" },
+            { nama: "AVIANA FARAH HAMIDAH", kelas: "X-8", nis: "-" },
+            { nama: "AZURA SINAR LARINDA", kelas: "X-8", nis: "-" },
+            { nama: "DISCA MAURA MEILANY SAPUTRI", kelas: "X-8", nis: "-" },
+            { nama: "DWI RAHMAWATI", kelas: "X-8", nis: "-" },
+            { nama: "ELLADORA CHOERLYA AURORA", kelas: "X-8", nis: "-" },
+            { nama: "FIOLITA AULIA PUTRI EFINDA", kelas: "X-8", nis: "-" },
+            { nama: "FRIDA NAYLA IZA HARTONO", kelas: "X-8", nis: "-" },
+            { nama: "GIEN ARUM SETYORINI", kelas: "X-8", nis: "-" },
+            { nama: "LAILY BAROKATUL MAGFIROH", kelas: "X-8", nis: "-" },
+            { nama: "MAULA DAFFA IHSANI", kelas: "X-8", nis: "-" },
+            { nama: "MEI WULANDARI", kelas: "X-8", nis: "-" },
+            { nama: "MUHAMMAD JUANDA FIRMANSYAH", kelas: "X-8", nis: "-" },
+            { nama: "MUHAMMAD REYZA GHANY FIRMANDA", kelas: "X-8", nis: "-" },
+            { nama: "NADIF ASWA RAM ALI VAD AQ", kelas: "X-8", nis: "-" },
+            { nama: "NADYA SOFWAH RAMADHANI", kelas: "X-8", nis: "-" },
+            { nama: "NAYLATUS SAIDAH", kelas: "X-8", nis: "-" },
+            { nama: "NUR AZIZAH ALIYAH", kelas: "X-8", nis: "-" },
+            { nama: "PUTRI AGUSTINA ALDANISYAH", kelas: "X-8", nis: "-" },
+            { nama: "RAMA SAPUTRA ADITIA", kelas: "X-8", nis: "-" },
+            { nama: "RANI SHAFIRA LIMARTA", kelas: "X-8", nis: "-" },
+            { nama: "RIKA AYU NOVITASARI", kelas: "X-8", nis: "-" },
+            { nama: "SAFA AULIA", kelas: "X-8", nis: "-" },
+            { nama: "SEPTI VICI AHIRA", kelas: "X-8", nis: "-" },
+            { nama: "SHARAVI MAGHFUR ROMADLON", kelas: "X-8", nis: "-" },
+            { nama: "SILFI NOVIYANASARI", kelas: "X-8", nis: "-" },
+            { nama: "SITI NURHALISA", kelas: "X-8", nis: "-" },
+            { nama: "SRI MULYANI", kelas: "X-8", nis: "-" },
+            { nama: "VALENTINO ROSI ABDILLAH", kelas: "X-8", nis: "-" },
+            { nama: "WILDHAN JANUAR PRATAMA", kelas: "X-8", nis: "-" },
+            { nama: "YOSINANDA AUFIN NURIL HUBBI", kelas: "X-8", nis: "-" }
+        ];
+
+        let currentUser = null; // 'guru' or object student
+        let currentClass = '';
+        let currentElement = 'quran';
+
+        // DATABASE IN MEMORY (Loaded from LocalStorage)
+        let dbSiswa = [...INITIAL_STUDENTS]; 
+        let dbNilai = {}; // Key: kelas_nama_elemen -> {p, k, s, desc}
+        let dbTugas = []; // [{id, title, desc, link, kelas, date}]
+        let dbPengumpulan = []; // [{taskId, nama, kelas, link, date}]
+
+        // --- INISIALISASI ---
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            initSelectors();
+            checkSession();
+        });
+
+        function loadData() {
+            const storedSiswa = localStorage.getItem('pai_db_siswa');
+            const storedNilai = localStorage.getItem('pai_db_nilai');
+            const storedTugas = localStorage.getItem('pai_db_tugas');
+            const storedPengumpulan = localStorage.getItem('pai_db_pengumpulan');
+            
+            if (storedSiswa) {
+                const parsed = JSON.parse(storedSiswa);
+                if (parsed && parsed.length > 0) {
+                    dbSiswa = parsed; // Use stored data if it exists
+                }
+            } else {
+                saveData(); // Save the initially provided Excel data
+            }
+            
+            if (storedNilai) dbNilai = JSON.parse(storedNilai);
+            if (storedTugas) dbTugas = JSON.parse(storedTugas);
+            if (storedPengumpulan) dbPengumpulan = JSON.parse(storedPengumpulan);
+        }
+
+        function saveData() {
+            localStorage.setItem('pai_db_siswa', JSON.stringify(dbSiswa));
+            localStorage.setItem('pai_db_nilai', JSON.stringify(dbNilai));
+            localStorage.setItem('pai_db_tugas', JSON.stringify(dbTugas));
+            localStorage.setItem('pai_db_pengumpulan', JSON.stringify(dbPengumpulan));
+        }
+
+        function initSelectors() {
+            // Populate Class Dropdowns
+            const classSelects = ['global-kelas', 'task-class', 'login-siswa-kelas', 'manual-student-class'];
+            classSelects.forEach(id => {
+                const el = document.getElementById(id);
+                if(el) {
+                    el.innerHTML = (id === 'task-class' || id === 'manual-student-class') ? '' : '<option value="">-- Pilih Kelas --</option>';
+                    CLASS_LIST.forEach(cls => {
+                        const opt = document.createElement('option');
+                        opt.value = cls;
+                        opt.textContent = cls;
+                        el.appendChild(opt);
+                    });
+                }
+            });
+
+            // Populate Element Buttons
+            const elContainer = document.getElementById('element-selector');
+            if(elContainer) {
+                elContainer.innerHTML = '';
+                ELEMENTS.forEach(el => {
+                    const btn = document.createElement('button');
+                    btn.className = `p-2 rounded-lg text-xs font-bold transition-all border ${currentElement === el.id ? 'bg-emerald-600 text-white border-emerald-600 shadow-md' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`;
+                    btn.textContent = el.name;
+                    btn.onclick = () => switchElement(el.id);
+                    elContainer.appendChild(btn);
+                });
+            }
+        }
+
+        // --- NAVIGASI & UI ---
+        function switchView(viewId) {
+            document.querySelectorAll('body > div[id^="view-"]').forEach(el => {
+                el.classList.add('hidden');
+            });
+            document.getElementById(viewId).classList.remove('hidden');
+            
+            // Sidebar active state update
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active', 'bg-emerald-800', 'text-white'));
+            
+            if(viewId === 'view-guru' && currentClass) renderBulkTable();
+            if(viewId === 'view-kelola-tugas') renderTaskList();
+            if(viewId === 'view-data-siswa') renderStudentPreview();
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        // --- LOGIC GURU ---
+        function handleGuruLogin(e) {
+            e.preventDefault();
+            const user = document.getElementById('guru-username').value;
+            const pass = document.getElementById('guru-password').value;
+            if (user && pass === '12345') {
+                currentUser = user;
+                document.getElementById('guru-name-display').textContent = user;
+                switchView('view-guru');
+                showToast("Selamat datang, " + user);
+            } else {
+                showToast('Password Salah! (Default: 12345)');
+            }
+        }
+
+        function handleClassChange() {
+            currentClass = document.getElementById('global-kelas').value;
+            document.getElementById('bulk-class-label').textContent = currentClass;
+            document.getElementById('rekap-class-label').textContent = currentClass;
+            renderBulkTable();
+            renderRekapTable();
+        }
+
+        function switchElement(elId) {
+            currentElement = elId;
+            const elData = ELEMENTS.find(e => e.id === elId);
+            
+            // Update UI buttons
+            const container = document.getElementById('element-selector');
+            Array.from(container.children).forEach((btn, idx) => {
+                const isMatch = ELEMENTS[idx].id === elId;
+                btn.className = `p-2 rounded-lg text-xs font-bold transition-all border ${isMatch ? 'bg-emerald-600 text-white border-emerald-600 shadow-md' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`;
+            });
+
+            document.getElementById('bulk-element-label').textContent = elData.name;
+            document.getElementById('topic-title').textContent = elData.name + ": " + elData.desc;
+            renderBulkTable();
+        }
+
+        // --- LOGIC INPUT NILAI (BULK) ---
+        function renderBulkTable() {
+            const tbody = document.getElementById('bulk-tbody');
+            tbody.innerHTML = '';
+            
+            if (!currentClass) return;
+
+            const students = dbSiswa.filter(s => s.kelas === currentClass);
+            
+            if (students.length === 0) {
+                document.getElementById('bulk-empty-msg').classList.remove('hidden');
+                return;
+            }
+            document.getElementById('bulk-empty-msg').classList.add('hidden');
+
+            students.forEach((s, idx) => {
+                const key = `${s.kelas}_${s.nama}_${currentElement}`;
+                const data = dbNilai[key] || { p: '', k: '', s: '', d: '' };
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="px-4 py-2 border-b font-medium text-gray-700">${idx+1}. ${s.nama}</td>
+                    <td class="px-1 py-2 border-b"><input type="number" name="p_${idx}" value="${data.p}" class="w-full text-center p-2 border rounded focus:ring-1 focus:ring-emerald-500 inp-p" min="0" max="100" placeholder="0"></td>
+                    <td class="px-1 py-2 border-b"><input type="number" name="k_${idx}" value="${data.k}" class="w-full text-center p-2 border rounded focus:ring-1 focus:ring-emerald-500 inp-k" min="0" max="100" placeholder="0"></td>
+                    <td class="px-2 py-2 border-b">
+                        <select name="s_${idx}" class="w-full p-2 border rounded text-xs inp-s bg-white">
+                            <option value="">-</option>
+                            <option value="SB" ${data.s === 'SB' ? 'selected' : ''}>Sangat Baik</option>
+                            <option value="B" ${data.s === 'B' ? 'selected' : ''}>Baik</option>
+                            <option value="C" ${data.s === 'C' ? 'selected' : ''}>Cukup</option>
+                        </select>
+                    </td>
+                    <td class="px-2 py-2 border-b"><input type="text" name="d_${idx}" value="${data.d || ''}" class="w-full text-xs p-2 border rounded text-gray-600 inp-d" placeholder="Otomatis..."></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function saveBulkData(e) {
+            e.preventDefault();
+            if (!currentClass) return showToast('Pilih Kelas Dulu');
+            
+            const students = dbSiswa.filter(s => s.kelas === currentClass);
+            const inputsP = document.querySelectorAll('.inp-p');
+            const inputsK = document.querySelectorAll('.inp-k');
+            const inputsS = document.querySelectorAll('.inp-s');
+            const inputsD = document.querySelectorAll('.inp-d');
+
+            let count = 0;
+            students.forEach((s, idx) => {
+                const pVal = inputsP[idx].value;
+                const kVal = inputsK[idx].value;
+                const sVal = inputsS[idx].value;
+                
+                // Generate Deskripsi Otomatis jika nilai ada
+                let desc = inputsD[idx].value;
+                if (!desc && pVal && kVal) {
+                    const avg = (parseInt(pVal) + parseInt(kVal)) / 2;
+                    const elName = ELEMENTS.find(e => e.id === currentElement).name;
+                    if (avg >= 90) desc = `Sangat baik menguasai ${elName}.`;
+                    else if (avg >= 80) desc = `Baik dalam materi ${elName}.`;
+                    else if (avg >= 70) desc = `Cukup menguasai ${elName}, perlu ditingkatkan.`;
+                    else desc = `Perlu bimbingan dalam ${elName}.`;
+                }
+
+                if (pVal || kVal) {
+                    const key = `${s.kelas}_${s.nama}_${currentElement}`;
+                    dbNilai[key] = { p: pVal, k: kVal, s: sVal, d: desc };
+                    count++;
+                }
+            });
+
+            saveData();
+            showToast(`Berhasil menyimpan ${count} data nilai.`);
+            renderBulkTable();
+            renderRekapTable(); // Update rekap if open
+        }
+
+        function autoFillAttitude() {
+            document.querySelectorAll('.inp-s').forEach(sel => sel.value = 'B');
+        }
+
+        function copyDown(type) {
+            const inputs = document.querySelectorAll(type === 'b_p' ? '.inp-p' : '.inp-k');
+            if(inputs.length > 0) {
+                const firstVal = inputs[0].value;
+                inputs.forEach(inp => inp.value = firstVal);
+            }
+        }
+
+        function renderRekapTable() {
+            const tbody = document.getElementById('rekap-tbody');
+            tbody.innerHTML = '';
+            if(!currentClass) return;
+
+            const students = dbSiswa.filter(s => s.kelas === currentClass);
+            students.forEach((s, idx) => {
+                const key = `${s.kelas}_${s.nama}_${currentElement}`;
+                const data = dbNilai[key];
+
+                if(data) {
+                    const avg = Math.round((Number(data.p) + Number(data.k))/2);
+                    let predikat = 'D';
+                    if(avg >= 92) predikat = 'A';
+                    else if(avg >= 83) predikat = 'B';
+                    else if(avg >= 75) predikat = 'C';
+
+                    const tr = document.createElement('tr');
+                    tr.className = idx % 2 === 0 ? 'bg-white' : 'bg-gray-50';
+                    tr.innerHTML = `
+                        <td class="p-3 border text-center">${idx+1}</td>
+                        <td class="p-3 border font-medium">${s.nama}</td>
+                        <td class="p-3 border text-center font-bold text-emerald-700 bg-emerald-50">${avg}</td>
+                        <td class="p-3 border text-center">${predikat}</td>
+                        <td class="p-3 border text-center">${data.s || '-'}</td>
+                        <td class="p-3 border text-xs text-gray-600 italic">${data.d || '-'}</td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+            });
+            
+            // Update print headers
+            document.getElementById('print-class').textContent = currentClass;
+            document.getElementById('print-element').textContent = ELEMENTS.find(e => e.id === currentElement).name;
+        }
+
+        function clearClassData() {
+            if(confirm('Yakin hapus nilai kelas ini untuk elemen yang dipilih?')) {
+                const students = dbSiswa.filter(s => s.kelas === currentClass);
+                students.forEach(s => {
+                    const key = `${s.kelas}_${s.nama}_${currentElement}`;
+                    delete dbNilai[key];
+                });
+                saveData();
+                renderBulkTable();
+                renderRekapTable();
+                showToast('Data nilai dihapus.');
+            }
+        }
+
+        // --- LOGIC DATA SISWA (EXCEL) ---
+        function handleExcelUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, {type: 'array'});
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+                // Mapping and cleaning
+                let newCount = 0;
+                jsonData.forEach(row => {
+                    // Adapt key names based on common excel headers (insensitive)
+                    const nama = row['Nama'] || row['nama'] || row['NAMA'];
+                    const kelas = row['Kelas'] || row['kelas'] || row['KELAS'];
+                    const nis = row['NIS'] || row['nis'] || '';
+
+                    if (nama && kelas) {
+                        // Check duplicate
+                        const exists = dbSiswa.some(s => s.nama === nama && s.kelas === kelas);
+                        if (!exists) {
+                            dbSiswa.push({ nama, kelas, nis });
+                            newCount++;
+                        }
+                    }
+                });
+
+                saveData();
+                document.getElementById('upload-status').classList.remove('hidden');
+                document.getElementById('upload-status').textContent = `Sukses! ${newCount} siswa ditambahkan.`;
+                document.getElementById('upload-status').classList.remove('text-red-500');
+                document.getElementById('upload-status').classList.add('text-green-600');
+                document.getElementById('upload-status').classList.remove('hidden');
+                renderStudentPreview();
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        // --- NEW: LOGIC ADD STUDENT MANUAL ---
+        function handleAddStudent(e) {
+            e.preventDefault();
+            const cls = document.getElementById('manual-student-class').value;
+            const name = document.getElementById('manual-student-name').value;
+            const nis = document.getElementById('manual-student-nis').value;
+
+            if (cls && name) {
+                // Check duplicate
+                const exists = dbSiswa.some(s => s.nama === name && s.kelas === cls);
+                if (exists) {
+                    alert('Siswa dengan nama ini sudah ada di kelas tersebut!');
+                    return;
+                }
+
+                dbSiswa.push({ nama: name, kelas: cls, nis: nis || '-' });
+                saveData();
+                renderStudentPreview();
+                showToast(`Siswa ${name} berhasil ditambahkan!`);
+                
+                // Clear inputs except class for faster entry
+                document.getElementById('manual-student-name').value = '';
+                document.getElementById('manual-student-nis').value = '';
+                document.getElementById('manual-student-name').focus();
+            }
+        }
+
+        function deleteStudent(idx) {
+            if(confirm('Yakin ingin menghapus siswa ini? Data nilai juga akan terhapus.')) {
+                // Remove student
+                const s = dbSiswa[idx];
+                // Also remove associated grades to keep DB clean
+                ELEMENTS.forEach(el => {
+                    const key = `${s.kelas}_${s.nama}_${el.id}`;
+                    delete dbNilai[key];
+                });
+                
+                dbSiswa.splice(idx, 1); // Remove from array
+                saveData();
+                renderStudentPreview();
+                showToast('Siswa dihapus.');
+            }
+        }
+
+        function renderStudentPreview() {
+            const tbody = document.getElementById('student-preview-body');
+            tbody.innerHTML = '';
+            
+            // Show all students, maybe paginated or just reversed list
+            // For simplicity showing last 20 added or based on a filter? 
+            // Let's show all but scrollable. reversed to show newest first.
+            
+            const reversedList = [...dbSiswa].reverse(); 
+            // Note: index in dbSiswa is length - 1 - displayedIndex
+            
+            if(reversedList.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-gray-400">Belum ada data siswa.</td></tr>';
+                return;
+            }
+
+            reversedList.forEach((s, i) => {
+                const originalIndex = dbSiswa.length - 1 - i;
+                tbody.innerHTML += `
+                    <tr class="hover:bg-gray-50 group">
+                        <td class="px-6 py-3 text-gray-500">${i+1}</td>
+                        <td class="px-6 py-3 font-medium text-gray-800">${s.nama}</td>
+                        <td class="px-6 py-3"><span class="bg-emerald-100 text-emerald-800 py-1 px-2 rounded text-xs font-bold">${s.kelas}</span></td>
+                        <td class="px-6 py-3 text-gray-500">${s.nis || '-'}</td>
+                        <td class="px-6 py-3 text-center">
+                            <button onclick="deleteStudent(${originalIndex})" class="text-red-400 hover:text-red-600 hover:bg-red-50 p-2 rounded transition"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>`;
+            });
+        }
+        
+        // --- LOGIC TUGAS ---
+        function handleSaveTask(e) {
+            e.preventDefault();
+            const title = document.getElementById('task-title').value;
+            const desc = document.getElementById('task-desc').value;
+            const link = document.getElementById('task-link').value;
+            const kelas = document.getElementById('task-class').value;
+            
+            if(!kelas) {
+                showToast('Pilih kelas tujuan tugas!');
+                return;
+            }
+
+            dbTugas.unshift({
+                id: Date.now(),
+                title, desc, link, kelas,
+                date: new Date().toLocaleDateString('id-ID')
+            });
+            
+            saveData();
+            e.target.reset();
+            renderTaskList();
+            showToast('Tugas berhasil dikirim');
+        }
+
+        function renderTaskList() {
+            const container = document.getElementById('task-list-container');
+            container.innerHTML = '';
+            
+            if (dbTugas.length === 0) {
+                container.innerHTML = '<p class="text-gray-400 text-center italic py-8">Belum ada tugas.</p>';
+                return;
+            }
+
+            dbTugas.forEach((t, idx) => {
+                const submissionsCount = dbPengumpulan.filter(p => p.taskId === t.id).length;
+                
+                const div = document.createElement('div');
+                div.className = 'p-4 border border-gray-100 rounded-xl hover:bg-emerald-50 transition group relative';
+                div.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div class="w-full">
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-600 bg-emerald-100 px-2 py-1 rounded">${t.kelas}</span>
+                            <h4 class="font-bold text-gray-800 mt-1">${t.title}</h4>
+                            <p class="text-xs text-gray-500 mt-1 line-clamp-2">${t.desc}</p>
+                            <span class="text-[10px] text-gray-400 mt-2 block"><i class="far fa-clock"></i> ${t.date}</span>
+                            
+                            <div class="mt-3 pt-3 border-t border-gray-200 flex justify-between items-center">
+                                <button onclick="lihatPengumpulan(${t.id})" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg transition font-medium flex items-center gap-1 shadow-sm">
+                                    <i class="fas fa-inbox"></i> Pengumpulan (${submissionsCount})
+                                </button>
+                                <button onclick="deleteTask(${idx})" class="text-red-400 hover:text-red-600 p-2 rounded-full hover:bg-red-50 transition" title="Hapus Tugas"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function deleteTask(idx) {
+            if(confirm('Hapus tugas ini? Data pengumpulan siswa untuk tugas ini juga akan terhapus.')) {
+                const taskId = dbTugas[idx].id;
+                dbPengumpulan = dbPengumpulan.filter(p => p.taskId !== taskId); // Bersihkan riwayat pengumpulan
+                dbTugas.splice(idx, 1);
+                saveData();
+                renderTaskList();
+            }
+        }
+
+        // --- LOGIC SISWA ---
+        function populateSiswaNameSelect() {
+            const cls = document.getElementById('login-siswa-kelas').value;
+            const nameSelect = document.getElementById('login-siswa-nama');
+            nameSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
+            
+            if (cls) {
+                const students = dbSiswa.filter(s => s.kelas === cls);
+                students.sort((a,b) => a.nama.localeCompare(b.nama));
+                students.forEach(s => {
+                    const opt = document.createElement('option');
+                    opt.value = s.nama;
+                    opt.textContent = s.nama;
+                    nameSelect.appendChild(opt);
+                });
+                nameSelect.disabled = false;
+            } else {
+                nameSelect.disabled = true;
+            }
+        }
+
+        function handleSiswaLogin(e) {
+            e.preventDefault();
+            const cls = document.getElementById('login-siswa-kelas').value;
+            const name = document.getElementById('login-siswa-nama').value;
+            
+            if (cls && name) {
+                currentUser = { role: 'siswa', nama: name, kelas: cls };
+                renderSiswaDashboard();
+                switchView('view-siswa-dashboard');
+                showToast("Selamat datang, " + name);
+            }
+        }
+
+        function renderSiswaDashboard() {
+            const { nama, kelas } = currentUser;
+            document.getElementById('student-dash-name').textContent = nama;
+            document.getElementById('student-dash-class').textContent = kelas;
+
+            // 1. Calculate Stats & Rapor
+            const raporBody = document.getElementById('student-rapor-body');
+            raporBody.innerHTML = '';
+            
+            let totalScore = 0;
+            let count = 0;
+            let attitudes = [];
+            const labels = [];
+            const dataScores = [];
+
+            ELEMENTS.forEach(el => {
+                const key = `${kelas}_${nama}_${el.id}`;
+                const val = dbNilai[key];
+                
+                let p = 0, k = 0, avg = 0, ket = '-';
+                
+                if (val) {
+                    p = parseInt(val.p) || 0;
+                    k = parseInt(val.k) || 0;
+                    if(p > 0 || k > 0) {
+                        avg = (p + k) / 2;
+                        totalScore += avg;
+                        count++;
+                        attitudes.push(val.s);
+                        ket = avg >= 75 ? 'Tuntas' : 'Remidi';
+                    }
+                }
+
+                // Chart Data
+                labels.push(el.name);
+                dataScores.push(avg);
+
+                // Table Row
+                raporBody.innerHTML += `
+                    <tr>
+                        <td class="p-3 font-medium text-gray-700 border-b border-gray-50">${el.name}</td>
+                        <td class="p-3 text-center text-gray-600 border-b border-gray-50">${p || '-'}</td>
+                        <td class="p-3 text-center text-gray-600 border-b border-gray-50">${k || '-'}</td>
+                        <td class="p-3 text-right border-b border-gray-50"><span class="text-xs px-2 py-1 rounded ${ket === 'Tuntas' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">${ket}</span></td>
+                    </tr>
+                `;
+            });
+
+            // Summary
+            const finalAvg = count > 0 ? Math.round(totalScore / count) : 0;
+            document.getElementById('student-avg-score').textContent = finalAvg;
+            
+            // Predicate Logic (Simplified Mode)
+            let modeAttitude = '-';
+            if (attitudes.length > 0) {
+                modeAttitude = attitudes.sort((a,b) => attitudes.filter(v => v===a).length - attitudes.filter(v => v===b).length).pop();
+            }
+            document.getElementById('student-predicate').textContent = modeAttitude || '-';
+
+            // 2. Render Chart
+            renderChart(labels, dataScores);
+
+            // 3. Render Tasks
+            const taskContainer = document.getElementById('student-task-list');
+            taskContainer.innerHTML = '';
+            const myTasks = dbTugas.filter(t => t.kelas === kelas);
+            
+            if(myTasks.length === 0) {
+                taskContainer.innerHTML = '<p class="text-center text-gray-400 text-sm py-4">Tidak ada tugas aktif.</p>';
+            } else {
+                myTasks.forEach(t => {
+                    const submission = dbPengumpulan.find(p => p.taskId === t.id && p.nama === nama && p.kelas === kelas);
+                    let actionHTML = '';
+                    
+                    let linkHTML = t.link ? `<a href="${t.link}" target="_blank" class="block w-full text-center bg-white border border-blue-500 text-blue-600 hover:bg-blue-50 py-2 rounded-lg text-xs font-bold mb-3 transition shadow-sm"><i class="fas fa-external-link-alt"></i> Buka Google Form / Link Tugas</a>` : '';
+                    
+                    if(submission) {
+                        actionHTML = `
+                            ${linkHTML}
+                            <div class="mt-3 p-3 bg-green-50 rounded-lg border border-green-200">
+                                <div class="flex items-center gap-1 text-green-700 text-xs font-bold mb-1">
+                                    <i class="fas fa-check-circle"></i> Berhasil Dikumpulkan
+                                </div>
+                                <p class="text-xs text-gray-600"><span class="font-bold">Bukti:</span> ${submission.link}</p>
+                                <p class="text-[10px] text-gray-400 mt-1">Pada: ${submission.date}</p>
+                                <button onclick="batalKumpulkan(${t.id})" class="mt-2 text-[10px] text-red-500 hover:underline"><i class="fas fa-times"></i> Batal Kumpulkan</button>
+                            </div>
+                        `;
+                    } else {
+                        actionHTML = `
+                            ${linkHTML}
+                            <div class="mt-3 flex flex-col gap-2">
+                                <input type="text" id="link-tugas-${t.id}" class="w-full text-xs p-2.5 border border-gray-300 rounded-lg outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="Paste Bukti Link ATAU ketik 'Selesai' jika via G-Form...">
+                                <button onclick="kumpulkanTugas(${t.id})" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-xs font-bold transition shadow-sm">
+                                    <i class="fas fa-paper-plane mr-1"></i> Kirim / Tandai Selesai
+                                </button>
+                            </div>
+                        `;
+                    }
+
+                    taskContainer.innerHTML += `
+                        <div class="p-4 bg-blue-50 rounded-xl border border-blue-100">
+                            <h4 class="font-bold text-blue-900 text-sm">${t.title}</h4>
+                            <p class="text-xs text-blue-800 mt-1 mb-3">${t.desc}</p>
+                            ${actionHTML}
+                            <div class="mt-3 text-[10px] text-blue-500 flex items-center gap-1"><i class="far fa-clock"></i> Dipublikasikan: ${t.date}</div>
+                        </div>
+                    `;
+                });
+            }
+        }
+
+        let chartInstance = null;
+        function renderChart(labels, data) {
+            const ctx = document.getElementById('studentChart').getContext('2d');
+            if (chartInstance) chartInstance.destroy();
+            
+            chartInstance = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Capaian Kompetensi',
+                        data: data,
+                        backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                        borderColor: '#059669',
+                        pointBackgroundColor: '#047857',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: 'rgba(0,0,0,0.05)' },
+                            grid: { color: 'rgba(0,0,0,0.05)' },
+                            suggestedMin: 0,
+                            suggestedMax: 100
+                        }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        // --- UTILITIES SYSTEM ---
+        function logout() {
+            currentUser = null;
+            switchView('view-landing');
+        }
+
+        function checkSession() {
+            // Placeholder: Check session if implementing real auth
+        }
+
+        function printPage() {
+            window.print();
+        }
+
+        function goBackFromInfo() {
+            if(currentUser) {
+                if(currentUser.role === 'siswa') switchView('view-siswa-dashboard');
+                else switchView('view-guru');
+            } else {
+                switchView('view-login-options');
+            }
+        }
+
+        // Backup & Restore
+        function downloadBackup() {
+            const data = {
+                siswa: dbSiswa,
+                nilai: dbNilai,
+                tugas: dbTugas,
+                pengumpulan: dbPengumpulan,
+                timestamp: new Date().toISOString()
+            };
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", "backup_pai_" + new Date().toISOString().slice(0,10) + ".json");
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        }
+
+        function restoreBackup(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if(data.siswa && data.nilai) {
+                        dbSiswa = data.siswa;
+                        dbNilai = data.nilai;
+                        dbTugas = data.tugas || [];
+                        dbPengumpulan = data.pengumpulan || [];
+                        saveData();
+                        showToast('Data berhasil dipulihkan!');
+                        setTimeout(() => location.reload(), 1000);
+                    } else {
+                        showToast('Format file salah!');
+                    }
+                } catch(err) {
+                    showToast('File rusak atau bukan JSON valid.');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function hardReset() {
+            if(confirm('PERINGATAN: Semua data (Siswa, Nilai, Tugas) akan dihapus permanen dari browser ini. Lanjutkan?')) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
+
+        // --- FUNGSI PENGUMPULAN TUGAS ---
+        function kumpulkanTugas(taskId) {
+            const linkInput = document.getElementById(`link-tugas-${taskId}`);
+            if(!linkInput || !linkInput.value.trim()) {
+                showToast("Ketik keterangan / link terlebih dahulu!");
+                return;
+            }
+            
+            dbPengumpulan.push({
+                taskId: taskId,
+                nama: currentUser.nama,
+                kelas: currentUser.kelas,
+                link: linkInput.value.trim(),
+                date: new Date().toLocaleString('id-ID')
+            });
+            saveData();
+            showToast("Tugas berhasil dikumpulkan!");
+            renderSiswaDashboard(); // Refresh UI
+        }
+
+        function batalKumpulkan(taskId) {
+            if(confirm("Yakin ingin membatalkan pengumpulan tugas ini?")) {
+                dbPengumpulan = dbPengumpulan.filter(p => !(p.taskId === taskId && p.nama === currentUser.nama && p.kelas === currentUser.kelas));
+                saveData();
+                showToast("Pengumpulan tugas dibatalkan.");
+                renderSiswaDashboard(); // Refresh UI
+            }
+        }
+
+        // Modal Guru
+        function lihatPengumpulan(taskId) {
+            const modal = document.getElementById('modal-pengumpulan');
+            const tbody = document.getElementById('pengumpulan-tbody');
+            const header = document.getElementById('modal-pengumpulan-header');
+            tbody.innerHTML = '';
+            
+            const subs = dbPengumpulan.filter(p => p.taskId === taskId);
+            const task = dbTugas.find(t => t.id === taskId);
+            
+            header.innerHTML = `
+                <h3 class="font-bold text-gray-800 text-lg">Pengumpulan: ${task.title}</h3>
+                <div class="flex gap-2">
+                    <button onclick="exportPengumpulanExcel(${taskId})" class="bg-green-600 hover:bg-green-700 text-white text-xs px-3 py-2 rounded-lg shadow flex items-center gap-1 transition">
+                        <i class="fas fa-file-excel"></i> Export Excel
+                    </button>
+                    <button onclick="closeModalPengumpulan()" class="text-gray-500 hover:text-gray-800 p-1"><i class="fas fa-times text-xl"></i></button>
+                </div>
+            `;
+            
+            if(subs.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="p-8 text-center text-gray-500 italic"><i class="fas fa-inbox text-3xl mb-2 block text-gray-300"></i>Belum ada siswa yang mengumpulkan tugas ini.</td></tr>';
+            } else {
+                subs.forEach(s => {
+                    const isLink = s.link.startsWith('http://') || s.link.startsWith('https://');
+                    const linkHTML = isLink ? `<a href="${s.link}" target="_blank" rel="noopener noreferrer" class="bg-blue-100 text-blue-700 px-4 py-1.5 rounded-lg text-xs font-bold hover:bg-blue-200 inline-block transition-colors shadow-sm">Buka Link <i class="fas fa-external-link-alt ml-1"></i></a>` : `<span class="text-gray-600 font-medium">"${s.link}"</span>`;
+                    
+                    tbody.innerHTML += `
+                        <tr class="hover:bg-emerald-50 transition-colors">
+                            <td class="p-3 font-medium text-gray-800">${s.nama}</td>
+                            <td class="p-3"><span class="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs font-bold">${s.kelas}</span></td>
+                            <td class="p-3 text-xs text-gray-500"><i class="far fa-clock mr-1"></i> ${s.date}</td>
+                            <td class="p-3 text-center">${linkHTML}</td>
+                        </tr>
+                    `;
+                });
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeModalPengumpulan() {
+            document.getElementById('modal-pengumpulan').classList.add('hidden');
+        }
+
+        function exportPengumpulanExcel(taskId) {
+            const task = dbTugas.find(t => t.id === taskId);
+            const subs = dbPengumpulan.filter(p => p.taskId === taskId);
+            
+            if(subs.length === 0) {
+                showToast('Belum ada data pengumpulan untuk diexport.');
+                return;
+            }
+            
+            // Format data for Excel
+            const wsData = subs.map((s, i) => ({
+                "No": i + 1,
+                "Nama Siswa": s.nama,
+                "Kelas": s.kelas,
+                "Waktu Pengumpulan": s.date,
+                "Keterangan / Link": s.link
+            }));
+            
+            const ws = XLSX.utils.json_to_sheet(wsData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Pengumpulan Tugas");
+            
+            // Create a safe filename
+            const safeTitle = task.title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+            XLSX.writeFile(wb, `Pengumpulan_${safeTitle}_${task.kelas}.xlsx`);
+            showToast("File Excel berhasil diunduh!");
+        }
+    </script>
+</body>
+</html>
