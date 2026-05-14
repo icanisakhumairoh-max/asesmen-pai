@@ -1427,17 +1427,38 @@
                 return;
             }
 
-            dbTugas.unshift({
-                id: Date.now(),
-                title, desc, link, kelas,
-                date: new Date().toLocaleDateString('id-ID')
-            });
+            database.ref('tugas').push(newTask)
+        .then(() => {
+            // Jika berhasil terkirim ke Firebase
+            showToast('Tugas berhasil dikirim ke Cloud!');
+            e.target.reset(); // Kosongkan form setelah kirim
+        })
+        .catch((error) => {
+            // Jika ada error (misal koneksi internet putus)
+            showToast('Gagal: ' + error.message);
+        });
+}
+        // Tambahkan fungsi ini di bawah inisialisasi Firebase Anda
+function sinkronisasiTugas() {
+    database.ref('tugas').on('value', (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+            // Mengubah data objek Firebase kembali menjadi array agar bisa dibaca fungsi render Anda
+            dbTugas = Object.values(data).reverse(); 
             
-            saveData();
-            e.target.reset();
-            renderTaskList();
-            showToast('Tugas berhasil dikirim');
+            // Panggil fungsi render yang sudah Anda buat sebelumnya
+            renderTaskList(); 
+            
+            // Jika yang membuka adalah siswa, update dashboardnya juga
+            if (currentUser && currentUser.role === 'siswa') {
+                renderSiswaDashboard();
+            }
         }
+    });
+}
+
+// Panggil fungsi ini tepat setelah database siap
+sinkronisasiTugas();
 
         function renderTaskList() {
             const container = document.getElementById('task-list-container');
