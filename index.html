@@ -82,30 +82,6 @@
         }
     </style>
 </head>
-<script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyBTeW9LnFBIJgo7yYGdZWIREjVONdQPAPo",
-    authDomain: "asesmen-pai.firebaseapp.com",
-    databaseURL: "https://asesmen-pai-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "asesmen-pai",
-    storageBucket: "asesmen-pai.firebasestorage.app",
-    messagingSenderId: "730420106109",
-    appId: "1:730420106109:web:80afa456cfeb883ca8b214",
-    measurementId: "G-108TTWYYWC"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-</script>
 <body class="islamic-bg min-h-screen transition-colors duration-500">
 
     <div id="global-watermark" class="watermark-fixed text-white/30">
@@ -1427,38 +1403,17 @@
                 return;
             }
 
-            database.ref('tugas').push(newTask)
-        .then(() => {
-            // Jika berhasil terkirim ke Firebase
-            showToast('Tugas berhasil dikirim ke Cloud!');
-            e.target.reset(); // Kosongkan form setelah kirim
-        })
-        .catch((error) => {
-            // Jika ada error (misal koneksi internet putus)
-            showToast('Gagal: ' + error.message);
-        });
-}
-        // Tambahkan fungsi ini di bawah inisialisasi Firebase Anda
-function sinkronisasiTugas() {
-    database.ref('tugas').on('value', (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-            // Mengubah data objek Firebase kembali menjadi array agar bisa dibaca fungsi render Anda
-            dbTugas = Object.values(data).reverse(); 
+            dbTugas.unshift({
+                id: Date.now(),
+                title, desc, link, kelas,
+                date: new Date().toLocaleDateString('id-ID')
+            });
             
-            // Panggil fungsi render yang sudah Anda buat sebelumnya
-            renderTaskList(); 
-            
-            // Jika yang membuka adalah siswa, update dashboardnya juga
-            if (currentUser && currentUser.role === 'siswa') {
-                renderSiswaDashboard();
-            }
+            saveData();
+            e.target.reset();
+            renderTaskList();
+            showToast('Tugas berhasil dikirim');
         }
-    });
-}
-
-// Panggil fungsi ini tepat setelah database siap
-sinkronisasiTugas();
 
         function renderTaskList() {
             const container = document.getElementById('task-list-container');
